@@ -1,0 +1,377 @@
+2026-02-22 02:01:29.839 WARN  [restartedMain] o.s.b.w.s.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/hibernate/autoconfigure/HibernateJpaConfiguration.class]: Failed to initialize dependency 'inMemoryDatabaseShutdownExecutor' of LoadTimeWeaverAware bean 'entityManagerFactory': Error creating bean with name 'inMemoryDatabaseShutdownExecutor' defined in class path resource [org/springframework/boot/devtools/autoconfigure/DevToolsDataSourceAutoConfiguration.class]: Unsatisfied dependency expressed through method 'inMemoryDatabaseShutdownExecutor' parameter 0: Error creating bean with name 'dataSource' defined in class path resource [org/springframework/boot/jdbc/autoconfigure/DataSourceConfiguration$Hikari.class]: Failed to instantiate [com.zaxxer.hikari.HikariDataSource]: Factory method 'dataSource' threw exception with message: Failed to determine a suitable driver class
+2026-02-22 02:01:29.937 ERROR [restartedMain] o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Failed to configure a DataSource: 'url' attribute is not specified and no embedded datasource could be configured.
+
+Reason: Failed to determine a suitable driver class
+
+
+Action:
+
+Consider the following:
+	If you want an embedded database (H2, HSQL or Derby), please put it on the classpath.
+	If you have database settings to be loaded from a particular profile you may need to activate it (the profiles local are currently active).
+
+2026-02-22 02:02:58.243 WARN  [restartedMain] o.s.b.w.s.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/hibernate/autoconfigure/HibernateJpaConfiguration.class]: Failed to initialize dependency 'inMemoryDatabaseShutdownExecutor' of LoadTimeWeaverAware bean 'entityManagerFactory': Error creating bean with name 'inMemoryDatabaseShutdownExecutor' defined in class path resource [org/springframework/boot/devtools/autoconfigure/DevToolsDataSourceAutoConfiguration.class]: Unsatisfied dependency expressed through method 'inMemoryDatabaseShutdownExecutor' parameter 0: Error creating bean with name 'dataSource' defined in class path resource [org/springframework/boot/jdbc/autoconfigure/DataSourceConfiguration$Hikari.class]: Failed to instantiate [com.zaxxer.hikari.HikariDataSource]: Factory method 'dataSource' threw exception with message: Failed to determine a suitable driver class
+2026-02-22 02:02:58.331 ERROR [restartedMain] o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Failed to configure a DataSource: 'url' attribute is not specified and no embedded datasource could be configured.
+
+Reason: Failed to determine a suitable driver class
+
+
+Action:
+
+Consider the following:
+	If you want an embedded database (H2, HSQL or Derby), please put it on the classpath.
+	If you have database settings to be loaded from a particular profile you may need to activate it (the profiles local are currently active).
+
+2026-02-22 02:04:41.672 WARN  [restartedMain] org.hibernate.orm.deprecation - HHH90000025: OracleDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-02-22 02:04:41.699 WARN  [restartedMain] org.hibernate.orm.jdbc - HHH100123: Low default JDBC fetch size: 10 (consider setting 'hibernate.jdbc.fetch_size')
+2026-02-22 02:04:43.221 WARN  [restartedMain] o.s.b.w.s.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'requestMappingHandlerMapping' defined in class path resource [org/springframework/boot/webmvc/autoconfigure/WebMvcAutoConfiguration$EnableWebMvcConfiguration.class]: Unsatisfied dependency expressed through method 'requestMappingHandlerMapping' parameter 0: Error creating bean with name 'mvcContentNegotiationManager' defined in class path resource [org/springframework/boot/webmvc/autoconfigure/WebMvcAutoConfiguration$EnableWebMvcConfiguration.class]: Failed to instantiate [org.springframework.web.accept.ContentNegotiationManager]: Factory method 'mvcContentNegotiationManager' threw exception with message: Error creating bean with name 'jacksonJsonHttpMessageConvertersCustomizer' defined in class path resource [org/springframework/boot/http/converter/autoconfigure/JacksonHttpMessageConvertersConfiguration$JacksonJsonHttpMessageConverterConfiguration.class]: Unsatisfied dependency expressed through method 'jacksonJsonHttpMessageConvertersCustomizer' parameter 0: Error creating bean with name 'jacksonJsonMapper' defined in class path resource [org/springframework/boot/jackson/autoconfigure/JacksonAutoConfiguration.class]: Unsatisfied dependency expressed through method 'jacksonJsonMapper' parameter 0: Error creating bean with name 'jsonMapperBuilder' defined in class path resource [org/springframework/boot/jackson/autoconfigure/JacksonAutoConfiguration.class]: Unsatisfied dependency expressed through method 'jsonMapperBuilder' parameter 0: Error creating bean with name 'standardJsonMapperBuilderCustomizer' defined in class path resource [org/springframework/boot/jackson/autoconfigure/JacksonAutoConfiguration$JacksonJsonMapperBuilderCustomizerConfiguration.class]: Unsatisfied dependency expressed through method 'standardJsonMapperBuilderCustomizer' parameter 0: Error creating bean with name 'spring.jackson-org.springframework.boot.jackson.autoconfigure.JacksonProperties': Could not bind properties to 'JacksonProperties' : prefix=spring.jackson, ignoreInvalidFields=false, ignoreUnknownFields=true
+2026-02-22 02:04:43.247 ERROR [restartedMain] o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Failed to bind properties under 'spring.jackson.serialization' to java.util.Map<tools.jackson.databind.SerializationFeature, java.lang.Boolean>:
+
+    Reason: failed to convert java.lang.String to tools.jackson.databind.SerializationFeature (caused by java.lang.IllegalArgumentException: No enum constant tools.jackson.databind.SerializationFeature.write-dates-as-timestamps)
+
+Action:
+
+Update your application's configuration. The following values are valid:
+
+    CLOSE_CLOSEABLE
+    EAGER_SERIALIZER_FETCH
+    FAIL_ON_EMPTY_BEANS
+    FAIL_ON_ORDER_MAP_BY_INCOMPARABLE_KEY
+    FAIL_ON_SELF_REFERENCES
+    FAIL_ON_UNWRAPPED_TYPE_IDENTIFIERS
+    FLUSH_AFTER_WRITE_VALUE
+    INDENT_OUTPUT
+    ORDER_MAP_ENTRIES_BY_KEYS
+    USE_EQUALITY_FOR_OBJECT_ID
+    WRAP_EXCEPTIONS
+    WRAP_ROOT_VALUE
+    WRITE_CHAR_ARRAYS_AS_JSON_ARRAYS
+    WRITE_EMPTY_JSON_ARRAYS
+    WRITE_SELF_REFERENCES_AS_NULL
+    WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED
+
+2026-02-22 02:06:09.157 WARN  [restartedMain] org.hibernate.orm.deprecation - HHH90000025: OracleDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-02-22 02:06:09.176 WARN  [restartedMain] org.hibernate.orm.jdbc - HHH100123: Low default JDBC fetch size: 10 (consider setting 'hibernate.jdbc.fetch_size')
+2026-02-22 02:06:10.337 WARN  [restartedMain] o.s.b.w.s.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'requestMappingHandlerMapping' defined in class path resource [org/springframework/boot/webmvc/autoconfigure/WebMvcAutoConfiguration$EnableWebMvcConfiguration.class]: Unsatisfied dependency expressed through method 'requestMappingHandlerMapping' parameter 0: Error creating bean with name 'mvcContentNegotiationManager' defined in class path resource [org/springframework/boot/webmvc/autoconfigure/WebMvcAutoConfiguration$EnableWebMvcConfiguration.class]: Failed to instantiate [org.springframework.web.accept.ContentNegotiationManager]: Factory method 'mvcContentNegotiationManager' threw exception with message: Error creating bean with name 'jacksonJsonHttpMessageConvertersCustomizer' defined in class path resource [org/springframework/boot/http/converter/autoconfigure/JacksonHttpMessageConvertersConfiguration$JacksonJsonHttpMessageConverterConfiguration.class]: Unsatisfied dependency expressed through method 'jacksonJsonHttpMessageConvertersCustomizer' parameter 0: Error creating bean with name 'jacksonJsonMapper' defined in class path resource [org/springframework/boot/jackson/autoconfigure/JacksonAutoConfiguration.class]: Unsatisfied dependency expressed through method 'jacksonJsonMapper' parameter 0: Error creating bean with name 'jsonMapperBuilder' defined in class path resource [org/springframework/boot/jackson/autoconfigure/JacksonAutoConfiguration.class]: Unsatisfied dependency expressed through method 'jsonMapperBuilder' parameter 0: Error creating bean with name 'standardJsonMapperBuilderCustomizer' defined in class path resource [org/springframework/boot/jackson/autoconfigure/JacksonAutoConfiguration$JacksonJsonMapperBuilderCustomizerConfiguration.class]: Unsatisfied dependency expressed through method 'standardJsonMapperBuilderCustomizer' parameter 0: Error creating bean with name 'spring.jackson-org.springframework.boot.jackson.autoconfigure.JacksonProperties': Could not bind properties to 'JacksonProperties' : prefix=spring.jackson, ignoreInvalidFields=false, ignoreUnknownFields=true
+2026-02-22 02:06:10.362 ERROR [restartedMain] o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Failed to bind properties under 'spring.jackson.serialization' to java.util.Map<tools.jackson.databind.SerializationFeature, java.lang.Boolean>:
+
+    Reason: failed to convert java.lang.String to tools.jackson.databind.SerializationFeature (caused by java.lang.IllegalArgumentException: No enum constant tools.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+
+Action:
+
+Update your application's configuration. The following values are valid:
+
+    CLOSE_CLOSEABLE
+    EAGER_SERIALIZER_FETCH
+    FAIL_ON_EMPTY_BEANS
+    FAIL_ON_ORDER_MAP_BY_INCOMPARABLE_KEY
+    FAIL_ON_SELF_REFERENCES
+    FAIL_ON_UNWRAPPED_TYPE_IDENTIFIERS
+    FLUSH_AFTER_WRITE_VALUE
+    INDENT_OUTPUT
+    ORDER_MAP_ENTRIES_BY_KEYS
+    USE_EQUALITY_FOR_OBJECT_ID
+    WRAP_EXCEPTIONS
+    WRAP_ROOT_VALUE
+    WRITE_CHAR_ARRAYS_AS_JSON_ARRAYS
+    WRITE_EMPTY_JSON_ARRAYS
+    WRITE_SELF_REFERENCES_AS_NULL
+    WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED
+
+2026-02-22 02:13:04.372 WARN  [restartedMain] org.hibernate.orm.deprecation - HHH90000025: OracleDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-02-22 02:13:04.398 WARN  [restartedMain] org.hibernate.orm.jdbc - HHH100123: Low default JDBC fetch size: 10 (consider setting 'hibernate.jdbc.fetch_size')
+2026-02-22 02:13:05.592 WARN  [restartedMain] o.s.b.w.s.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'requestMappingHandlerMapping' defined in class path resource [org/springframework/boot/webmvc/autoconfigure/WebMvcAutoConfiguration$EnableWebMvcConfiguration.class]: Unsatisfied dependency expressed through method 'requestMappingHandlerMapping' parameter 0: Error creating bean with name 'mvcContentNegotiationManager' defined in class path resource [org/springframework/boot/webmvc/autoconfigure/WebMvcAutoConfiguration$EnableWebMvcConfiguration.class]: Failed to instantiate [org.springframework.web.accept.ContentNegotiationManager]: Factory method 'mvcContentNegotiationManager' threw exception with message: Error creating bean with name 'jacksonJsonHttpMessageConvertersCustomizer' defined in class path resource [org/springframework/boot/http/converter/autoconfigure/JacksonHttpMessageConvertersConfiguration$JacksonJsonHttpMessageConverterConfiguration.class]: Unsatisfied dependency expressed through method 'jacksonJsonHttpMessageConvertersCustomizer' parameter 0: Error creating bean with name 'jacksonJsonMapper' defined in class path resource [org/springframework/boot/jackson/autoconfigure/JacksonAutoConfiguration.class]: Unsatisfied dependency expressed through method 'jacksonJsonMapper' parameter 0: Error creating bean with name 'jsonMapperBuilder' defined in class path resource [org/springframework/boot/jackson/autoconfigure/JacksonAutoConfiguration.class]: Unsatisfied dependency expressed through method 'jsonMapperBuilder' parameter 0: Error creating bean with name 'standardJsonMapperBuilderCustomizer' defined in class path resource [org/springframework/boot/jackson/autoconfigure/JacksonAutoConfiguration$JacksonJsonMapperBuilderCustomizerConfiguration.class]: Unsatisfied dependency expressed through method 'standardJsonMapperBuilderCustomizer' parameter 0: Error creating bean with name 'spring.jackson-org.springframework.boot.jackson.autoconfigure.JacksonProperties': Could not bind properties to 'JacksonProperties' : prefix=spring.jackson, ignoreInvalidFields=false, ignoreUnknownFields=true
+2026-02-22 02:13:05.625 ERROR [restartedMain] o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Failed to bind properties under 'spring.jackson.serialization' to java.util.Map<tools.jackson.databind.SerializationFeature, java.lang.Boolean>:
+
+    Reason: failed to convert java.lang.String to tools.jackson.databind.SerializationFeature (caused by java.lang.IllegalArgumentException: No enum constant tools.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+
+Action:
+
+Update your application's configuration. The following values are valid:
+
+    CLOSE_CLOSEABLE
+    EAGER_SERIALIZER_FETCH
+    FAIL_ON_EMPTY_BEANS
+    FAIL_ON_ORDER_MAP_BY_INCOMPARABLE_KEY
+    FAIL_ON_SELF_REFERENCES
+    FAIL_ON_UNWRAPPED_TYPE_IDENTIFIERS
+    FLUSH_AFTER_WRITE_VALUE
+    INDENT_OUTPUT
+    ORDER_MAP_ENTRIES_BY_KEYS
+    USE_EQUALITY_FOR_OBJECT_ID
+    WRAP_EXCEPTIONS
+    WRAP_ROOT_VALUE
+    WRITE_CHAR_ARRAYS_AS_JSON_ARRAYS
+    WRITE_EMPTY_JSON_ARRAYS
+    WRITE_SELF_REFERENCES_AS_NULL
+    WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED
+
+2026-02-22 02:16:20.602 WARN  [restartedMain] org.hibernate.orm.deprecation - HHH90000025: OracleDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-02-22 02:16:20.618 WARN  [restartedMain] org.hibernate.orm.jdbc - HHH100123: Low default JDBC fetch size: 10 (consider setting 'hibernate.jdbc.fetch_size')
+2026-02-22 02:17:15.932 ERROR [http-nio-8080-exec-5] c.m.m.e.MtsGlobalExceptionHandler - Unhandled exception occurred: No static resource swagger-ui for request '/swagger-ui/'.
+org.springframework.web.servlet.resource.NoResourceFoundException: No static resource swagger-ui for request '/swagger-ui/'.
+	at org.springframework.web.servlet.resource.ResourceHttpRequestHandler.handleRequest(ResourceHttpRequestHandler.java:527)
+	at org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter.handle(HttpRequestHandlerAdapter.java:50)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:963)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:866)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1000)
+	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:892)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:622)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:874)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:710)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:128)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.ServerHttpObservationFilter.doFilterInternal(ServerHttpObservationFilter.java:110)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:199)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:77)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:492)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:397)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1779)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:946)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:480)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:57)
+	at java.base/java.lang.Thread.run(Unknown Source)
+2026-02-22 02:18:11.186 WARN  [restartedMain] org.hibernate.orm.deprecation - HHH90000025: OracleDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-02-22 02:18:11.208 WARN  [restartedMain] org.hibernate.orm.jdbc - HHH100123: Low default JDBC fetch size: 10 (consider setting 'hibernate.jdbc.fetch_size')
+2026-02-22 02:20:41.302 ERROR [http-nio-8080-exec-4] c.m.m.e.MtsGlobalExceptionHandler - Unhandled exception occurred: No static resource .well-known/appspecific/com.chrome.devtools.json for request '/.well-known/appspecific/com.chrome.devtools.json'.
+org.springframework.web.servlet.resource.NoResourceFoundException: No static resource .well-known/appspecific/com.chrome.devtools.json for request '/.well-known/appspecific/com.chrome.devtools.json'.
+	at org.springframework.web.servlet.resource.ResourceHttpRequestHandler.handleRequest(ResourceHttpRequestHandler.java:527)
+	at org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter.handle(HttpRequestHandlerAdapter.java:50)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:963)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:866)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1000)
+	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:892)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:622)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:874)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:710)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:128)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.ServerHttpObservationFilter.doFilterInternal(ServerHttpObservationFilter.java:110)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:199)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:77)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:492)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:397)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1779)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:946)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:480)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:57)
+	at java.base/java.lang.Thread.run(Unknown Source)
+2026-02-22 02:20:47.626 ERROR [http-nio-8080-exec-6] c.m.m.e.MtsGlobalExceptionHandler - Unhandled exception occurred: No static resource .well-known/appspecific/com.chrome.devtools.json for request '/.well-known/appspecific/com.chrome.devtools.json'.
+org.springframework.web.servlet.resource.NoResourceFoundException: No static resource .well-known/appspecific/com.chrome.devtools.json for request '/.well-known/appspecific/com.chrome.devtools.json'.
+	at org.springframework.web.servlet.resource.ResourceHttpRequestHandler.handleRequest(ResourceHttpRequestHandler.java:527)
+	at org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter.handle(HttpRequestHandlerAdapter.java:50)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:963)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:866)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1000)
+	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:892)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:622)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:874)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:710)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:128)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.ServerHttpObservationFilter.doFilterInternal(ServerHttpObservationFilter.java:110)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:199)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:77)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:492)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:397)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1779)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:946)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:480)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:57)
+	at java.base/java.lang.Thread.run(Unknown Source)
+2026-02-22 02:24:09.507 WARN  [restartedMain] org.hibernate.orm.deprecation - HHH90000025: OracleDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-02-22 02:24:09.530 WARN  [restartedMain] org.hibernate.orm.jdbc - HHH100123: Low default JDBC fetch size: 10 (consider setting 'hibernate.jdbc.fetch_size')
+2026-02-22 02:24:25.979 ERROR [http-nio-8080-exec-2] c.m.m.e.MtsGlobalExceptionHandler - Unhandled exception occurred: No static resource .well-known/appspecific/com.chrome.devtools.json for request '/.well-known/appspecific/com.chrome.devtools.json'.
+org.springframework.web.servlet.resource.NoResourceFoundException: No static resource .well-known/appspecific/com.chrome.devtools.json for request '/.well-known/appspecific/com.chrome.devtools.json'.
+	at org.springframework.web.servlet.resource.ResourceHttpRequestHandler.handleRequest(ResourceHttpRequestHandler.java:527)
+	at org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter.handle(HttpRequestHandlerAdapter.java:50)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:963)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:866)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1000)
+	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:892)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:622)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:874)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:710)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:128)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.ServerHttpObservationFilter.doFilterInternal(ServerHttpObservationFilter.java:110)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:199)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:77)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:492)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:397)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1779)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:946)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:480)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:57)
+	at java.base/java.lang.Thread.run(Unknown Source)
+2026-02-22 02:24:43.697 ERROR [http-nio-8080-exec-4] c.m.m.e.MtsGlobalExceptionHandler - Unhandled exception occurred: No static resource .well-known/appspecific/com.chrome.devtools.json for request '/.well-known/appspecific/com.chrome.devtools.json'.
+org.springframework.web.servlet.resource.NoResourceFoundException: No static resource .well-known/appspecific/com.chrome.devtools.json for request '/.well-known/appspecific/com.chrome.devtools.json'.
+	at org.springframework.web.servlet.resource.ResourceHttpRequestHandler.handleRequest(ResourceHttpRequestHandler.java:527)
+	at org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter.handle(HttpRequestHandlerAdapter.java:50)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:963)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:866)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1000)
+	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:892)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:622)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:874)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:710)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:128)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.ServerHttpObservationFilter.doFilterInternal(ServerHttpObservationFilter.java:110)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:199)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:77)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:492)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:397)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1779)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:946)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:480)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:57)
+	at java.base/java.lang.Thread.run(Unknown Source)
+2026-02-22 02:26:27.558 ERROR [http-nio-8080-Acceptor] org.apache.tomcat.util.net.Acceptor - Socket accept failed
+java.nio.channels.AsynchronousCloseException
+	at java.base/java.nio.channels.spi.AbstractInterruptibleChannel.end(Unknown Source)
+	at java.base/sun.nio.ch.ServerSocketChannelImpl.end(Unknown Source)
+	at java.base/sun.nio.ch.ServerSocketChannelImpl.accept(Unknown Source)
+	at org.apache.tomcat.util.net.NioEndpoint.serverSocketAccept(NioEndpoint.java:532)
+	at org.apache.tomcat.util.net.NioEndpoint.serverSocketAccept(NioEndpoint.java:71)
+	at org.apache.tomcat.util.net.Acceptor.run(Acceptor.java:127)
+	at java.base/java.lang.Thread.run(Unknown Source)
+2026-02-22 02:26:28.045 WARN  [restartedMain] org.hibernate.orm.deprecation - HHH90000025: OracleDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-02-22 02:26:28.053 WARN  [restartedMain] org.hibernate.orm.jdbc - HHH100123: Low default JDBC fetch size: 10 (consider setting 'hibernate.jdbc.fetch_size')
+2026-02-22 02:26:28.232 WARN  [main] org.hibernate.orm.deprecation - HHH90000025: OracleDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-02-22 02:26:28.252 WARN  [main] org.hibernate.orm.jdbc - HHH100123: Low default JDBC fetch size: 10 (consider setting 'hibernate.jdbc.fetch_size')

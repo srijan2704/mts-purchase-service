@@ -1,0 +1,6 @@
+CREATE TABLE units (
+    unit_id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    unit_name VARCHAR2(50) NOT NULL CONSTRAINT uq_unit_name UNIQUE,
+    abbreviation VARCHAR2(10) NOT NULL,
+    description VARCHAR2(200)
+);
