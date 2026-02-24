@@ -1,0 +1,25 @@
+# Git / editor
+.git
+.gitignore
+.vscode
+.idea
+
+# Build output
+target
+
+# Local env / secrets
+.env
+.env.*
+!.env.example
+
+# Local logs and docs
+logs
+
+# Keep sensitive wallet files out of image context
+src/main/resources/Wallet_mtsdb
+
+# Optional local SQL scripts (currently ignored in git as well)
+src/main/resources/db-scripts
+
+# OS junk
+.DS_Store
