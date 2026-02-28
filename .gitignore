@@ -1,0 +1,56 @@
+# ------------------------------
+# Local environment / secrets
+# ------------------------------
+.env
+.env.*
+!.env.example
+
+# OCI wallet and TLS secret material
+src/main/resources/Wallet_mtsdb/
+**/Wallet_mtsdb/
+*.jks
+*.p12
+*.sso
+
+# ------------------------------
+# Build outputs
+# ------------------------------
+target/
+out/
+build/
+
+# ------------------------------
+# Logs and runtime dumps
+# ------------------------------
+logs/
+*.log
+hs_err_pid*
+replay_pid*
+
+# ------------------------------
+# IDE / editor files
+# ------------------------------
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+.classpath
+.project
+.settings/
+.factorypath
+
+# ------------------------------
+# OS and temp files
+# ------------------------------
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# ------------------------------
+# Test / coverage artifacts
+# ------------------------------
+coverage/
+*.lcov
