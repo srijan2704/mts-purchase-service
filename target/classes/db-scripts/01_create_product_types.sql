@@ -1,5 +1,0 @@
-CREATE TABLE product_types (
-    type_id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    type_name VARCHAR2(100) NOT NULL CONSTRAINT uq_pt_name UNIQUE,
-    description VARCHAR2(500)
-);

@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.mts.mts_purchase_service.controller.ProductControllerTest
--------------------------------------------------------------------------------
-Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.062 s -- in com.mts.mts_purchase_service.controller.ProductControllerTest
