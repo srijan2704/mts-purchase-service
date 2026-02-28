@@ -3,6 +3,8 @@ package com.mts.mts_purchase_service.controller;
 import com.mts.mts_purchase_service.exception.MtsGlobalExceptionHandler;
 import com.mts.mts_purchase_service.exception.UnauthorizedException;
 import com.mts.mts_purchase_service.models.AuthLoginRequestDTO;
+import com.mts.mts_purchase_service.models.AuthRegisterOtpResponseDTO;
+import com.mts.mts_purchase_service.models.AuthRegisterRequestDTO;
 import com.mts.mts_purchase_service.models.AuthSessionResponseDTO;
 import com.mts.mts_purchase_service.service.AuthService;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +19,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.time.LocalDateTime;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -41,6 +44,44 @@ class AuthControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(controller)
                 .setControllerAdvice(new MtsGlobalExceptionHandler())
                 .build();
+    }
+
+    @Test
+    void requestRegistrationOtp_shouldReturn200() throws Exception {
+        AuthRegisterOtpResponseDTO response = new AuthRegisterOtpResponseDTO();
+        response.setUsername("newuser");
+        response.setDeliveryEmailMasked("o***r@example.com");
+        response.setExpiresAt(LocalDateTime.now().plusMinutes(10));
+
+        when(authService.requestRegistrationOtp(any(AuthRegisterRequestDTO.class))).thenReturn(response);
+
+        mockMvc.perform(post("/api/auth/register/request-otp")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "username": "newuser",
+                                  "password": "StrongPass123"
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.username").value("newuser"));
+    }
+
+    @Test
+    void verifyRegistrationOtp_shouldReturn200() throws Exception {
+        doNothing().when(authService).verifyRegistrationOtp(any());
+
+        mockMvc.perform(post("/api/auth/register/verify-otp")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "username": "newuser",
+                                  "otp": "123456"
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true));
     }
 
     @Test

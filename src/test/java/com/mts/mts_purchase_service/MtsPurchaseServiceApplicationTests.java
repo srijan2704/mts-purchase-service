@@ -8,6 +8,7 @@ import com.mts.mts_purchase_service.repository.ProductVariantRepository;
 import com.mts.mts_purchase_service.repository.PurchaseOrderRepository;
 import com.mts.mts_purchase_service.repository.SellerRepository;
 import com.mts.mts_purchase_service.repository.UnitRepository;
+import com.mts.mts_purchase_service.repository.UserRegistrationOtpRepository;
 import com.mts.mts_purchase_service.repository.UserSessionRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -50,6 +51,9 @@ class MtsPurchaseServiceApplicationTests {
     @MockitoBean
     private UnitRepository unitRepository;
 
+    @MockitoBean
+    private UserRegistrationOtpRepository userRegistrationOtpRepository;
+    
     @MockitoBean
     private UserSessionRepository userSessionRepository;
 
