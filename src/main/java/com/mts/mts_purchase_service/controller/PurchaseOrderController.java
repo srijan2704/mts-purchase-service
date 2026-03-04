@@ -41,15 +41,17 @@ public class PurchaseOrderController {
     }
 
     /**
-     * Lists orders by date with optional seller filter.
+     * Lists orders by single date or date range with optional seller filter.
      */
     @GetMapping
-    @Operation(summary = "List purchase orders", description = "Filters: date and sellerId are optional.")
+    @Operation(summary = "List purchase orders", description = "Filters: date or fromDate+toDate, and optional sellerId.")
     public ResponseEntity<ApiResponseDTO<List<PurchaseOrderDTO>>> getOrders(
             @RequestParam(required = false) LocalDate date,
+            @RequestParam(required = false) LocalDate fromDate,
+            @RequestParam(required = false) LocalDate toDate,
             @RequestParam(required = false) Long sellerId
     ) {
-        List<PurchaseOrderDTO> orders = purchaseOrderService.getOrders(date, sellerId);
+        List<PurchaseOrderDTO> orders = purchaseOrderService.getOrders(date, fromDate, toDate, sellerId);
         return ResponseEntity.ok(ApiResponseDTO.success("Purchase orders fetched successfully", orders));
     }
 

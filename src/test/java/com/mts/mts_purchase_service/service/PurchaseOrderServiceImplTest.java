@@ -181,4 +181,47 @@ class PurchaseOrderServiceImplTest {
         when(purchaseOrderRepository.findWithDetailsByOrderId(999L)).thenReturn(Optional.empty());
         assertThrows(ResourceNotFoundException.class, () -> purchaseOrderService.confirmOrder(999L));
     }
+
+    @Test
+    void getOrders_shouldUseDateRangeQueryInSingleCall() {
+        LocalDate fromDate = LocalDate.of(2026, 3, 1);
+        LocalDate toDate = LocalDate.of(2026, 3, 31);
+
+        Seller seller = new Seller();
+        seller.setSellerId(5L);
+        seller.setName("Sharma Traders");
+
+        PurchaseOrder order = new PurchaseOrder();
+        order.setOrderId(1L);
+        order.setSeller(seller);
+        order.setOrderDate(LocalDate.of(2026, 3, 14));
+        order.setStatus("DRAFT");
+        order.setTotalAmount(new BigDecimal("1000.00"));
+
+        when(purchaseOrderRepository.findByOrderDateBetweenOrderByOrderDateDescCreatedAtDesc(fromDate, toDate))
+                .thenReturn(List.of(order));
+
+        List<PurchaseOrderDTO> response = purchaseOrderService.getOrders(null, fromDate, toDate, null);
+
+        assertEquals(1, response.size());
+        verify(purchaseOrderRepository).findByOrderDateBetweenOrderByOrderDateDescCreatedAtDesc(fromDate, toDate);
+    }
+
+    @Test
+    void getOrders_shouldThrowWhenRangeIsPartial() {
+        LocalDate fromDate = LocalDate.of(2026, 3, 1);
+        assertThrows(IllegalArgumentException.class, () -> purchaseOrderService.getOrders(null, fromDate, null, null));
+    }
+
+    @Test
+    void getOrders_shouldThrowWhenDateAndRangeBothProvided() {
+        LocalDate date = LocalDate.of(2026, 3, 14);
+        LocalDate fromDate = LocalDate.of(2026, 3, 1);
+        LocalDate toDate = LocalDate.of(2026, 3, 31);
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> purchaseOrderService.getOrders(date, fromDate, toDate, null)
+        );
+    }
 }

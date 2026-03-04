@@ -10,8 +10,8 @@ import java.util.List;
  */
 public interface PurchaseOrderService {
 
-    /** Returns orders filtered by date and optional seller id. */
-    List<PurchaseOrderDTO> getOrders(LocalDate date, Long sellerId);
+    /** Returns orders filtered by single date or date range with optional seller id. */
+    List<PurchaseOrderDTO> getOrders(LocalDate date, LocalDate fromDate, LocalDate toDate, Long sellerId);
 
     /** Returns one order with line details. */
     PurchaseOrderDTO getOrderById(Long orderId);

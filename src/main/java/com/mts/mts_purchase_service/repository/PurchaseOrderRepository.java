@@ -26,6 +26,18 @@ public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder, Lo
     @EntityGraph(attributePaths = {"seller", "items", "items.variant", "items.variant.product", "items.variant.unit"})
     List<PurchaseOrder> findByOrderDateAndSellerSellerIdOrderByCreatedAtDesc(LocalDate orderDate, Long sellerId);
 
+    /** Returns orders in date range sorted by order date desc, then newest first. */
+    @EntityGraph(attributePaths = {"seller", "items", "items.variant", "items.variant.product", "items.variant.unit"})
+    List<PurchaseOrder> findByOrderDateBetweenOrderByOrderDateDescCreatedAtDesc(LocalDate fromDate, LocalDate toDate);
+
+    /** Returns seller orders in date range sorted by order date desc, then newest first. */
+    @EntityGraph(attributePaths = {"seller", "items", "items.variant", "items.variant.product", "items.variant.unit"})
+    List<PurchaseOrder> findByOrderDateBetweenAndSellerSellerIdOrderByOrderDateDescCreatedAtDesc(
+            LocalDate fromDate,
+            LocalDate toDate,
+            Long sellerId
+    );
+
     /** Returns CONFIRMED orders by date sorted by newest first. */
     @EntityGraph(attributePaths = {"seller", "items", "items.variant", "items.variant.product", "items.variant.unit"})
     List<PurchaseOrder> findByOrderDateAndStatusOrderByCreatedAtDesc(LocalDate orderDate, String status);

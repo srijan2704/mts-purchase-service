@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
@@ -102,6 +103,27 @@ class PurchaseOrderControllerTest {
                 .andExpect(jsonPath("$.data.status").value("CONFIRMED"));
     }
 
+
+    @Test
+    void getOrders_shouldSupportDateRangeSingleCall() throws Exception {
+        PurchaseOrderDTO response = new PurchaseOrderDTO();
+        response.setOrderId(55L);
+        response.setOrderDate(LocalDate.of(2026, 3, 14));
+
+        when(purchaseOrderService.getOrders(
+                null,
+                LocalDate.of(2026, 3, 1),
+                LocalDate.of(2026, 3, 31),
+                null
+        )).thenReturn(List.of(response));
+
+        mockMvc.perform(get("/api/purchase-orders")
+                        .param("fromDate", "2026-03-01")
+                        .param("toDate", "2026-03-31"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data[0].orderId").value(55));
+    }
     @Test
     void createOrder_shouldReturn400WhenValidationFails() throws Exception {
         mockMvc.perform(post("/api/purchase-orders")

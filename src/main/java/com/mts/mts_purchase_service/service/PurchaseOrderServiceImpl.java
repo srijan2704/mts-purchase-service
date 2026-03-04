@@ -40,22 +40,43 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     }
 
     /**
-     * Returns orders by date and optional seller filter.
+     * Returns orders by single date or date range and optional seller filter.
      */
     @Override
     @Transactional(readOnly = true)
-    public List<PurchaseOrderDTO> getOrders(LocalDate date, Long sellerId) {
+    public List<PurchaseOrderDTO> getOrders(LocalDate date, LocalDate fromDate, LocalDate toDate, Long sellerId) {
         List<PurchaseOrder> orders;
 
-        if (date == null) {
-            // Default to today's date when not explicitly provided.
-            date = LocalDate.now();
+        boolean rangeProvided = fromDate != null || toDate != null;
+
+        if (date != null && rangeProvided) {
+            throw new IllegalArgumentException("Provide either date or fromDate/toDate, not both");
         }
 
-        if (sellerId == null) {
-            orders = purchaseOrderRepository.findByOrderDateOrderByCreatedAtDesc(date);
+        if (rangeProvided) {
+            if (fromDate == null || toDate == null) {
+                throw new IllegalArgumentException("Both fromDate and toDate are required for range query");
+            }
+            if (fromDate.isAfter(toDate)) {
+                throw new IllegalArgumentException("fromDate cannot be after toDate");
+            }
+
+            if (sellerId == null) {
+                orders = purchaseOrderRepository.findByOrderDateBetweenOrderByOrderDateDescCreatedAtDesc(fromDate, toDate);
+            } else {
+                orders = purchaseOrderRepository.findByOrderDateBetweenAndSellerSellerIdOrderByOrderDateDescCreatedAtDesc(
+                        fromDate,
+                        toDate,
+                        sellerId
+                );
+            }
         } else {
-            orders = purchaseOrderRepository.findByOrderDateAndSellerSellerIdOrderByCreatedAtDesc(date, sellerId);
+            LocalDate effectiveDate = date != null ? date : LocalDate.now();
+            if (sellerId == null) {
+                orders = purchaseOrderRepository.findByOrderDateOrderByCreatedAtDesc(effectiveDate);
+            } else {
+                orders = purchaseOrderRepository.findByOrderDateAndSellerSellerIdOrderByCreatedAtDesc(effectiveDate, sellerId);
+            }
         }
 
         return orders.stream().map(this::mapToDTO).collect(Collectors.toList());
