@@ -20,7 +20,11 @@ Add these in GitHub repository settings:
 - `EC2_USER`
   - Example: `ec2-user`
 - `EC2_SSH_PRIVATE_KEY`
-  - Private key content (PEM) that can SSH into EC2 as `EC2_USER`
+  - Private key content (OpenSSH/PEM) that can SSH into EC2 as `EC2_USER`
+  - Paste the full key block including:
+    - `-----BEGIN ... PRIVATE KEY-----`
+    - `-----END ... PRIVATE KEY-----`
+  - Do not paste `.ppk` format keys
 - `EC2_KNOWN_HOSTS`
   - Output from:
     - `ssh-keyscan -H <EC2_HOST>`
@@ -69,3 +73,15 @@ If passwordless `sudo` is not set for deploy commands, deployment will fail.
 - Fallback health check (if actuator is restricted):
   - `http://127.0.0.1:8080/swagger-ui/index.html`
 - To customize paths or service names on EC2, set environment variables before running `scripts/ec2-deploy.sh`.
+
+## 6. Troubleshooting
+
+If deployment fails with:
+- `Load key ".../ec2_key": error in libcrypto`
+- `Permission denied (publickey,...)`
+
+Then `EC2_SSH_PRIVATE_KEY` is malformed or incompatible. Fixes:
+1. Re-copy key exactly from your `.pem`/OpenSSH private key file.
+2. Ensure begin/end lines are included.
+3. Ensure the key is not encrypted with a passphrase (or use a non-passphrase deploy key).
+4. Ensure `EC2_USER` matches the key owner user (`ec2-user`, `ubuntu`, etc.).
