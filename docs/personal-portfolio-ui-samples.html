@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Personal Portfolio Tracker - Sample UI Pages</title>
+  <style>
+    :root {
+      --bg0: #f5f4ef;
+      --bg1: #fff9ed;
+      --card: #ffffff;
+      --line: #dfd6c8;
+      --text: #1d2228;
+      --muted: #5f6771;
+      --brand: #0f9d8a;
+      --brand-2: #1e4e8c;
+      --up: #1f8f47;
+      --down: #bf3a31;
+      --warn: #a16207;
+      --chip: #f3efe6;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: "Avenir Next", "Segoe UI", Tahoma, sans-serif;
+      background:
+        radial-gradient(circle at 8% 8%, #ffefd2 0%, transparent 32%),
+        radial-gradient(circle at 92% 14%, #d7efe9 0%, transparent 28%),
+        linear-gradient(180deg, var(--bg1) 0%, var(--bg0) 100%);
+      min-height: 100vh;
+    }
+    .shell {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px 16px 44px;
+    }
+    .hero {
+      border: 1px solid #d4c9b8;
+      border-radius: 16px;
+      padding: 18px;
+      background: linear-gradient(135deg, #fff7e8, #ebf7f4);
+      box-shadow: 0 10px 28px rgba(30, 40, 60, 0.08);
+      margin-bottom: 14px;
+      animation: rise 420ms ease;
+    }
+    .hero h1 {
+      margin: 0;
+      font-size: 28px;
+      letter-spacing: 0.2px;
+      font-family: "Trebuchet MS", "Avenir Next", sans-serif;
+    }
+    .hero p {
+      margin: 8px 0 0;
+      color: var(--muted);
+    }
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .tab {
+      border: 1px solid #cdbda6;
+      background: #fff4df;
+      color: #3a352f;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 180ms ease;
+    }
+    .tab.active {
+      background: linear-gradient(90deg, #0f9d8a, #1e4e8c);
+      border-color: transparent;
+      color: #fff;
+      box-shadow: 0 6px 14px rgba(15, 157, 138, 0.24);
+    }
+    .page {
+      display: none;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+      animation: rise 300ms ease;
+    }
+    .page.active {
+      display: block;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 10px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+    }
+    .col-3 { grid-column: span 3; }
+    .col-4 { grid-column: span 4; }
+    .col-5 { grid-column: span 5; }
+    .col-6 { grid-column: span 6; }
+    .col-7 { grid-column: span 7; }
+    .col-8 { grid-column: span 8; }
+    .col-12 { grid-column: span 12; }
+    .label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .value {
+      font-size: 24px;
+      font-weight: 700;
+    }
+    .value.small {
+      font-size: 20px;
+    }
+    .up { color: var(--up); }
+    .down { color: var(--down); }
+    .table-wrap {
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 700px;
+      font-size: 14px;
+    }
+    th, td {
+      padding: 9px 10px;
+      border-bottom: 1px solid #ece4d9;
+      text-align: left;
+      white-space: nowrap;
+    }
+    th {
+      color: #2c3138;
+      background: #f8f1e5;
+      position: sticky;
+      top: 0;
+    }
+    .chip {
+      display: inline-block;
+      background: var(--chip);
+      border: 1px solid #ddcfbb;
+      border-radius: 999px;
+      padding: 2px 9px;
+      font-size: 12px;
+    }
+    .kpis {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .kpis .chip strong {
+      margin-left: 5px;
+    }
+    .bar {
+      height: 12px;
+      border-radius: 999px;
+      background: #ebf0f5;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+    .bar > span {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, #0f9d8a, #1e4e8c);
+    }
+    .connector {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fffdfa;
+    }
+    .connector h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+    }
+    .meta {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 4px;
+    }
+    .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      border: 1px solid #cbbda7;
+      background: #fff2da;
+      color: #3a3328;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn.primary {
+      border-color: transparent;
+      background: linear-gradient(90deg, #0f9d8a, #1e4e8c);
+      color: white;
+    }
+    .banner {
+      border: 1px solid #f0dd9d;
+      background: #fff8df;
+      color: #7b5a08;
+      padding: 10px 12px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+    .footer-note {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+    }
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @media (max-width: 880px) {
+      .col-3, .col-4, .col-5, .col-6, .col-7, .col-8 {
+        grid-column: span 12;
+      }
+      .hero h1 {
+        font-size: 23px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <h1>Personal Portfolio Tracker - UI Samples</h1>
+      <p>Sample navigation and layouts for Dashboard, Holdings, Transactions, Integrations, and Reconciliation pages.</p>
+    </section>
+
+    <nav class="tabs" aria-label="Page samples">
+      <button class="tab active" data-page="dashboard">Dashboard</button>
+      <button class="tab" data-page="holdings">Holdings</button>
+      <button class="tab" data-page="transactions">Transactions</button>
+      <button class="tab" data-page="integrations">Integrations</button>
+      <button class="tab" data-page="reconciliation">Reconciliation</button>
+    </nav>
+
+    <section class="page active" id="dashboard">
+      <div class="grid">
+        <article class="card col-3">
+          <div class="label">Total Net Worth</div>
+          <div class="value">Rs 83.46L</div>
+        </article>
+        <article class="card col-3">
+          <div class="label">Today Change</div>
+          <div class="value small up">+Rs 12,840</div>
+        </article>
+        <article class="card col-3">
+          <div class="label">Month Change</div>
+          <div class="value small up">+Rs 1.34L</div>
+        </article>
+        <article class="card col-3">
+          <div class="label">Auto-updated Assets</div>
+          <div class="value small">5 / 7</div>
+        </article>
+
+        <article class="card col-7">
+          <div class="label">Allocation by Asset Class</div>
+          <div class="kpis">
+            <span class="chip">Equity MF <strong>26%</strong></span>
+            <span class="chip">Debt MF <strong>18%</strong></span>
+            <span class="chip">EPF <strong>14%</strong></span>
+            <span class="chip">India Stocks <strong>17%</strong></span>
+            <span class="chip">US Stocks <strong>15%</strong></span>
+            <span class="chip">Bitcoin <strong>6%</strong></span>
+            <span class="chip">FD <strong>4%</strong></span>
+          </div>
+          <div class="bar"><span style="width: 26%"></span></div>
+          <div class="bar"><span style="width: 18%"></span></div>
+          <div class="bar"><span style="width: 14%"></span></div>
+          <div class="bar"><span style="width: 17%"></span></div>
+          <div class="bar"><span style="width: 15%"></span></div>
+          <div class="bar"><span style="width: 6%"></span></div>
+          <div class="bar"><span style="width: 4%"></span></div>
+        </article>
+
+        <article class="card col-5">
+          <div class="label">Latest Connector Sync</div>
+          <div class="meta">MF NAV Feed: 06:03 IST (SUCCESS)</div>
+          <div class="meta">NSE/BSE Quotes: 15:28 IST (SUCCESS)</div>
+          <div class="meta">US Quotes: 22:45 IST (SUCCESS)</div>
+          <div class="meta">CoinDCX: 15:30 IST (SUCCESS)</div>
+          <div class="meta">EPF Import: Pending (manual)</div>
+          <div class="meta">FD Ledger: Updated 2026-03-01 (manual)</div>
+        </article>
+
+        <article class="card col-12">
+          <div class="label">Portfolio Trend (30D)</div>
+          <div class="banner">Chart placeholder: line graph from backend `GET /api/v1/dashboard/networth-trend`</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="page" id="holdings">
+      <div class="banner">Filters placeholder: Asset Class, Account, Country, Profit/Loss.</div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Instrument</th>
+              <th>Account</th>
+              <th>Qty</th>
+              <th>Avg Cost</th>
+              <th>Price</th>
+              <th>Current Value</th>
+              <th>PnL</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Parag Parikh Flexi Cap</td>
+              <td>MF Folio 1</td>
+              <td>1,235.21</td>
+              <td>54.12</td>
+              <td>71.42</td>
+              <td>Rs 88,218</td>
+              <td class="up">+Rs 21,370</td>
+            </tr>
+            <tr>
+              <td>HDFC Bank</td>
+              <td>HDFC Sec</td>
+              <td>85</td>
+              <td>1,432.00</td>
+              <td>1,612.40</td>
+              <td>Rs 1,37,054</td>
+              <td class="up">+Rs 15,334</td>
+            </tr>
+            <tr>
+              <td>Apple Inc.</td>
+              <td>INDmoney</td>
+              <td>18</td>
+              <td>188.20 USD</td>
+              <td>201.74 USD</td>
+              <td>Rs 3,06,531</td>
+              <td class="up">+Rs 19,860</td>
+            </tr>
+            <tr>
+              <td>Bitcoin</td>
+              <td>CoinDCX</td>
+              <td>0.2248</td>
+              <td>58,210 USD</td>
+              <td>62,330 USD</td>
+              <td>Rs 11,47,294</td>
+              <td class="up">+Rs 74,982</td>
+            </tr>
+            <tr>
+              <td>FD - SBI 1Y</td>
+              <td>SBI</td>
+              <td>1</td>
+              <td>5,00,000</td>
+              <td>5,18,438</td>
+              <td>Rs 5,18,438</td>
+              <td class="up">+Rs 18,438</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="page" id="transactions">
+      <div class="row" style="margin-bottom:10px;">
+        <div class="kpis">
+          <span class="chip">This month txns: <strong>43</strong></span>
+          <span class="chip">Imports pending review: <strong>2</strong></span>
+        </div>
+        <div>
+          <button class="btn">Upload CSV</button>
+          <button class="btn primary">Add Manual Transaction</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Source</th>
+              <th>Type</th>
+              <th>Instrument</th>
+              <th>Quantity</th>
+              <th>Price</th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>2026-03-06</td>
+              <td>HDFC Sec</td>
+              <td><span class="chip">BUY</span></td>
+              <td>ICICI Bank</td>
+              <td>25</td>
+              <td>1,081.00</td>
+              <td>Rs 27,025</td>
+            </tr>
+            <tr>
+              <td>2026-03-06</td>
+              <td>CoinDCX</td>
+              <td><span class="chip">BUY</span></td>
+              <td>Bitcoin</td>
+              <td>0.012</td>
+              <td>61,892 USD</td>
+              <td>Rs 64,228</td>
+            </tr>
+            <tr>
+              <td>2026-03-05</td>
+              <td>MF Feed</td>
+              <td><span class="chip">SIP</span></td>
+              <td>UTI Nifty 50 Index</td>
+              <td>48.88</td>
+              <td>205.00</td>
+              <td>Rs 10,020</td>
+            </tr>
+            <tr>
+              <td>2026-03-02</td>
+              <td>EPF Import</td>
+              <td><span class="chip">CONTRIB</span></td>
+              <td>EPF Corpus</td>
+              <td>-</td>
+              <td>-</td>
+              <td>Rs 14,800</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="page" id="integrations">
+      <div class="grid">
+        <article class="connector col-4">
+          <h3>Mutual Fund NAV</h3>
+          <div class="meta">Mode: API</div>
+          <div class="meta">Last success: 2026-03-07 06:03 IST</div>
+          <div class="meta">Frequency: Daily</div>
+          <button class="btn primary" style="margin-top:9px;">Sync Now</button>
+        </article>
+        <article class="connector col-4">
+          <h3>HDFC Securities</h3>
+          <div class="meta">Mode: CSV Import + Quote API</div>
+          <div class="meta">Last holdings import: 2026-03-01</div>
+          <div class="meta">Price frequency: 15 min</div>
+          <button class="btn" style="margin-top:9px;">Upload Holdings</button>
+        </article>
+        <article class="connector col-4">
+          <h3>INDmoney (US Stocks)</h3>
+          <div class="meta">Mode: CSV Import + US Quote API</div>
+          <div class="meta">Last holdings import: 2026-03-05</div>
+          <div class="meta">Price frequency: 30 min</div>
+          <button class="btn" style="margin-top:9px;">Upload Holdings</button>
+        </article>
+        <article class="connector col-4">
+          <h3>CoinDCX</h3>
+          <div class="meta">Mode: API + Trade Export</div>
+          <div class="meta">Last success: 2026-03-07 15:30 IST</div>
+          <div class="meta">Frequency: 5 min</div>
+          <button class="btn primary" style="margin-top:9px;">Sync Now</button>
+        </article>
+        <article class="connector col-4">
+          <h3>EPF</h3>
+          <div class="meta">Mode: Statement Import</div>
+          <div class="meta">Last import: 2026-02-28</div>
+          <div class="meta">Status: Awaiting new statement</div>
+          <button class="btn" style="margin-top:9px;">Upload Statement</button>
+        </article>
+        <article class="connector col-4">
+          <h3>Fixed Deposits</h3>
+          <div class="meta">Mode: Manual Ledger</div>
+          <div class="meta">Last update: 2026-03-01</div>
+          <div class="meta">Next maturity: 2026-08-14</div>
+          <button class="btn" style="margin-top:9px;">Add / Edit FD</button>
+        </article>
+      </div>
+    </section>
+
+    <section class="page" id="reconciliation">
+      <div class="banner">Reconciliation queue from backend `GET /api/v1/reconciliation/issues`</div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Severity</th>
+              <th>Detected At</th>
+              <th>Account</th>
+              <th>Issue</th>
+              <th>Suggested Action</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="chip">HIGH</span></td>
+              <td>2026-03-07 07:02</td>
+              <td>HDFC Sec</td>
+              <td>Holding qty mismatch for HDFC Bank</td>
+              <td>Import latest broker statement</td>
+              <td><button class="btn">Resolve</button></td>
+            </tr>
+            <tr>
+              <td><span class="chip">MEDIUM</span></td>
+              <td>2026-03-07 06:08</td>
+              <td>EPF</td>
+              <td>No latest monthly contribution found</td>
+              <td>Upload EPF statement</td>
+              <td><button class="btn">Resolve</button></td>
+            </tr>
+            <tr>
+              <td><span class="chip">LOW</span></td>
+              <td>2026-03-07 05:59</td>
+              <td>FD Ledger</td>
+              <td>Interest rate missing for one FD</td>
+              <td>Edit FD details</td>
+              <td><button class="btn">Resolve</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <p class="footer-note">Sample mockup for implementation planning. Data shown is illustrative.</p>
+  </main>
+
+  <script>
+    (function () {
+      var tabs = document.querySelectorAll(".tab");
+      var pages = document.querySelectorAll(".page");
+      tabs.forEach(function (tab) {
+        tab.addEventListener("click", function () {
+          tabs.forEach(function (t) { t.classList.remove("active"); });
+          pages.forEach(function (p) { p.classList.remove("active"); });
+          tab.classList.add("active");
+          var page = document.getElementById(tab.dataset.page);
+          if (page) {
+            page.classList.add("active");
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
