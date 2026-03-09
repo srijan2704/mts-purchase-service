@@ -43,6 +43,10 @@ The workflow assumes:
 
 If passwordless `sudo` is not set for deploy commands, deployment will fail.
 
+Backend note:
+- Backend deployment syncs source code from GitHub Actions runner to EC2.
+- EC2 does not need GitHub credentials for backend deploy.
+
 ## 3. Trigger Behavior
 
 - On every push to `main`:
@@ -57,7 +61,7 @@ If passwordless `sudo` is not set for deploy commands, deployment will fail.
 2. Open `Actions -> Deploy To EC2`.
 3. Run manual workflow with:
    - `deploy_backend=true`
-   - `deploy_frontend=true`
+   - `deploy_frontend=false`
    - `run_tests=false` (faster first validation)
 4. Validate on EC2:
    - `sudo systemctl status mts-purchase-service`
@@ -85,3 +89,11 @@ Then `EC2_SSH_PRIVATE_KEY` is malformed or incompatible. Fixes:
 2. Ensure begin/end lines are included.
 3. Ensure the key is not encrypted with a passphrase (or use a non-passphrase deploy key).
 4. Ensure `EC2_USER` matches the key owner user (`ec2-user`, `ubuntu`, etc.).
+
+If deployment fails with:
+- `fatal: could not read Username for 'https://github.com': No such device or address`
+
+Then a git pull is running on EC2 without credentials.
+- For backend: this workflow now avoids EC2 git auth by syncing source from Actions.
+- For frontend: this can still occur if `deploy_frontend=true` and `/opt/mts-finance-dashboard` remote uses HTTPS.
+  - Fix by configuring frontend repo auth on EC2 (SSH deploy key or token), or deploy frontend from its own repository workflow.

@@ -94,8 +94,24 @@ jobs:
             exit 1
           fi
 
+          if [[ "$INPUT_DEPLOY_BACKEND" == "true" ]]; then
+            tar --exclude='.git' --exclude='target' --exclude='logs' --exclude='.env' \
+              -czf /tmp/mts-purchase-service-src.tgz .
+            scp -i ~/.ssh/ec2_key -o IdentitiesOnly=yes /tmp/mts-purchase-service-src.tgz \
+              "${EC2_USER}@${EC2_HOST}:/tmp/mts-purchase-service-src.tgz"
+          fi
+
           scp -i ~/.ssh/ec2_key -o IdentitiesOnly=yes ./scripts/ec2-deploy.sh \
             "${EC2_USER}@${EC2_HOST}:/tmp/ec2-deploy.sh"
 
           ssh -i ~/.ssh/ec2_key -o IdentitiesOnly=yes "${EC2_USER}@${EC2_HOST}" \
-            "set -euo pipefail; chmod +x /tmp/ec2-deploy.sh; /tmp/ec2-deploy.sh ${REMOTE_ARGS}"
+            "set -euo pipefail; \
+             if [[ \"$INPUT_DEPLOY_BACKEND\" == \"true\" ]]; then \
+               TMP_SYNC_DIR=\$(mktemp -d); \
+               mkdir -p /opt/mts-purchase-service; \
+               tar -xzf /tmp/mts-purchase-service-src.tgz -C \"\$TMP_SYNC_DIR\"; \
+               rsync -a --delete --exclude '.env' --exclude 'logs/' \"\$TMP_SYNC_DIR/\" /opt/mts-purchase-service/; \
+               rm -rf \"\$TMP_SYNC_DIR\"; \
+             fi; \
+             chmod +x /tmp/ec2-deploy.sh; \
+             BACKEND_GIT_SYNC=false /tmp/ec2-deploy.sh ${REMOTE_ARGS}"

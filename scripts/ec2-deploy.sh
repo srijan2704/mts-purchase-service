@@ -7,12 +7,14 @@ RUN_TESTS=false
 
 BACKEND_REPO_PATH="${BACKEND_REPO_PATH:-/opt/mts-purchase-service}"
 BACKEND_BRANCH="${BACKEND_BRANCH:-main}"
+BACKEND_GIT_SYNC="${BACKEND_GIT_SYNC:-true}"
 BACKEND_SERVICE_NAME="${BACKEND_SERVICE_NAME:-mts-purchase-service}"
 BACKEND_HEALTH_URL="${BACKEND_HEALTH_URL:-http://127.0.0.1:8080/actuator/health}"
 BACKEND_FALLBACK_HEALTH_URL="${BACKEND_FALLBACK_HEALTH_URL:-http://127.0.0.1:8080/swagger-ui/index.html}"
 
 FRONTEND_REPO_PATH="${FRONTEND_REPO_PATH:-/opt/mts-finance-dashboard}"
 FRONTEND_BRANCH="${FRONTEND_BRANCH:-main}"
+FRONTEND_GIT_SYNC="${FRONTEND_GIT_SYNC:-true}"
 FRONTEND_DEPLOY_PATH="${FRONTEND_DEPLOY_PATH:-/var/www/mts-finance-dashboard}"
 FRONTEND_WEB_SERVICE="${FRONTEND_WEB_SERVICE:-nginx}"
 
@@ -67,9 +69,13 @@ deploy_backend() {
   log "Deploying backend from ${BACKEND_REPO_PATH} (${BACKEND_BRANCH})"
   cd "${BACKEND_REPO_PATH}"
 
-  git fetch origin "${BACKEND_BRANCH}"
-  git checkout "${BACKEND_BRANCH}"
-  git pull --ff-only origin "${BACKEND_BRANCH}"
+  if [[ "${BACKEND_GIT_SYNC}" == "true" ]]; then
+    git fetch origin "${BACKEND_BRANCH}"
+    git checkout "${BACKEND_BRANCH}"
+    git pull --ff-only origin "${BACKEND_BRANCH}"
+  else
+    log "Skipping backend git sync (BACKEND_GIT_SYNC=${BACKEND_GIT_SYNC})."
+  fi
 
   chmod +x mvnw
   if [[ "$RUN_TESTS" == "true" ]]; then
@@ -102,9 +108,13 @@ deploy_frontend() {
   log "Deploying frontend from ${FRONTEND_REPO_PATH} (${FRONTEND_BRANCH})"
   cd "${FRONTEND_REPO_PATH}"
 
-  git fetch origin "${FRONTEND_BRANCH}"
-  git checkout "${FRONTEND_BRANCH}"
-  git pull --ff-only origin "${FRONTEND_BRANCH}"
+  if [[ "${FRONTEND_GIT_SYNC}" == "true" ]]; then
+    git fetch origin "${FRONTEND_BRANCH}"
+    git checkout "${FRONTEND_BRANCH}"
+    git pull --ff-only origin "${FRONTEND_BRANCH}"
+  else
+    log "Skipping frontend git sync (FRONTEND_GIT_SYNC=${FRONTEND_GIT_SYNC})."
+  fi
 
   sudo rsync -av --delete "${FRONTEND_REPO_PATH}/" "${FRONTEND_DEPLOY_PATH}/"
   sudo systemctl restart "${FRONTEND_WEB_SERVICE}"
