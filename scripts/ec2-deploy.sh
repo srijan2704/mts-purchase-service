@@ -11,6 +11,8 @@ BACKEND_GIT_SYNC="${BACKEND_GIT_SYNC:-true}"
 BACKEND_SERVICE_NAME="${BACKEND_SERVICE_NAME:-mts-purchase-service}"
 BACKEND_HEALTH_URL="${BACKEND_HEALTH_URL:-http://127.0.0.1:8080/actuator/health}"
 BACKEND_FALLBACK_HEALTH_URL="${BACKEND_FALLBACK_HEALTH_URL:-http://127.0.0.1:8080/swagger-ui/index.html}"
+BACKEND_HEALTH_MAX_RETRIES="${BACKEND_HEALTH_MAX_RETRIES:-30}"
+BACKEND_HEALTH_RETRY_DELAY_SECONDS="${BACKEND_HEALTH_RETRY_DELAY_SECONDS:-2}"
 
 FRONTEND_REPO_PATH="${FRONTEND_REPO_PATH:-/opt/mts-finance-dashboard}"
 FRONTEND_BRANCH="${FRONTEND_BRANCH:-main}"
@@ -95,9 +97,30 @@ deploy_backend() {
   sudo systemctl restart "${BACKEND_SERVICE_NAME}"
   sudo systemctl is-active --quiet "${BACKEND_SERVICE_NAME}"
 
-  if ! curl -fsS "${BACKEND_HEALTH_URL}" >/dev/null \
-    && ! curl -fsS "${BACKEND_FALLBACK_HEALTH_URL}" >/dev/null; then
+  healthy=false
+  attempt=1
+  while [[ "${attempt}" -le "${BACKEND_HEALTH_MAX_RETRIES}" ]]; do
+    if curl -fsS "${BACKEND_HEALTH_URL}" >/dev/null \
+      || curl -fsS "${BACKEND_FALLBACK_HEALTH_URL}" >/dev/null; then
+      healthy=true
+      break
+    fi
+
+    # Exit early if the service crashed during warm-up.
+    if ! sudo systemctl is-active --quiet "${BACKEND_SERVICE_NAME}"; then
+      echo "Backend service '${BACKEND_SERVICE_NAME}' is not active after restart." >&2
+      sudo journalctl -u "${BACKEND_SERVICE_NAME}" --since "10 min ago" --no-pager | tail -n 120 >&2 || true
+      exit 1
+    fi
+
+    log "Waiting for backend health... attempt ${attempt}/${BACKEND_HEALTH_MAX_RETRIES}"
+    sleep "${BACKEND_HEALTH_RETRY_DELAY_SECONDS}"
+    attempt=$((attempt + 1))
+  done
+
+  if [[ "${healthy}" != "true" ]]; then
     echo "Backend health check failed at ${BACKEND_HEALTH_URL} and ${BACKEND_FALLBACK_HEALTH_URL}" >&2
+    sudo journalctl -u "${BACKEND_SERVICE_NAME}" --since "10 min ago" --no-pager | tail -n 120 >&2 || true
     exit 1
   fi
 
