@@ -111,4 +111,4 @@ jobs:
                rm -rf \"\$TMP_SYNC_DIR\"; \
              fi; \
              chmod +x /tmp/ec2-deploy.sh; \
-             BACKEND_GIT_SYNC=false /tmp/ec2-deploy.sh ${REMOTE_ARGS}"
+             BACKEND_GIT_SYNC=false FRONTEND_GIT_CLEAN_UNTRACKED=true /tmp/ec2-deploy.sh ${REMOTE_ARGS}"

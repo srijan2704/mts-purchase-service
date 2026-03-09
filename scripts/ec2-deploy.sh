@@ -18,6 +18,7 @@ BACKEND_HEALTH_RETRY_DELAY_SECONDS="${BACKEND_HEALTH_RETRY_DELAY_SECONDS:-10}"
 FRONTEND_REPO_PATH="${FRONTEND_REPO_PATH:-/opt/mts-finance-dashboard}"
 FRONTEND_BRANCH="${FRONTEND_BRANCH:-main}"
 FRONTEND_GIT_SYNC="${FRONTEND_GIT_SYNC:-true}"
+FRONTEND_GIT_CLEAN_UNTRACKED="${FRONTEND_GIT_CLEAN_UNTRACKED:-false}"
 FRONTEND_DEPLOY_PATH="${FRONTEND_DEPLOY_PATH:-/var/www/mts-finance-dashboard}"
 FRONTEND_WEB_SERVICE="${FRONTEND_WEB_SERVICE:-nginx}"
 
@@ -145,6 +146,10 @@ deploy_frontend() {
   if [[ "${FRONTEND_GIT_SYNC}" == "true" ]]; then
     git fetch origin "${FRONTEND_BRANCH}"
     git checkout "${FRONTEND_BRANCH}"
+    if [[ "${FRONTEND_GIT_CLEAN_UNTRACKED}" == "true" ]]; then
+      log "Cleaning untracked frontend files before git pull (FRONTEND_GIT_CLEAN_UNTRACKED=true)."
+      git clean -fd
+    fi
     git pull --ff-only origin "${FRONTEND_BRANCH}"
   else
     log "Skipping frontend git sync (FRONTEND_GIT_SYNC=${FRONTEND_GIT_SYNC})."

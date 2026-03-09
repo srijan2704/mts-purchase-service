@@ -101,3 +101,24 @@ Then a git pull is running on EC2 without credentials.
 - For backend: this workflow now avoids EC2 git auth by syncing source from Actions.
 - For frontend: this can still occur if `deploy_frontend=true` and `/opt/mts-finance-dashboard` remote uses HTTPS.
   - Fix by configuring frontend repo auth on EC2 (SSH deploy key or token), or deploy frontend from its own repository workflow.
+
+If deployment fails with frontend git error:
+- `The following untracked working tree files would be overwritten by merge`
+
+Cause:
+- `/opt/mts-finance-dashboard` contains untracked files that conflict with incoming files from `origin/main`.
+
+Current workflow fix:
+- Workflow passes `FRONTEND_GIT_CLEAN_UNTRACKED=true` to remote deploy script.
+- Remote deploy runs `git clean -fd` before `git pull --ff-only` for frontend deploy.
+
+Manual one-time cleanup option on EC2:
+
+```bash
+cd /opt/mts-finance-dashboard
+git clean -fd
+git pull --ff-only origin main
+```
+
+Warning:
+- `git clean -fd` deletes untracked files/directories in frontend repo path.
