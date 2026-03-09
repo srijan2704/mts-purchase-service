@@ -1,0 +1,93 @@
+name: Deploy To EC2
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      deploy_backend:
+        description: "Deploy backend service"
+        required: true
+        default: "true"
+        type: choice
+        options:
+          - "true"
+          - "false"
+      deploy_frontend:
+        description: "Deploy frontend (Nginx static files)"
+        required: true
+        default: "false"
+        type: choice
+        options:
+          - "true"
+          - "false"
+      run_tests:
+        description: "Run backend tests on EC2 before packaging"
+        required: true
+        default: "false"
+        type: choice
+        options:
+          - "true"
+          - "false"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ec2-production-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy On EC2
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare SSH
+        env:
+          EC2_SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          EC2_KNOWN_HOSTS: ${{ secrets.EC2_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "$EC2_SSH_PRIVATE_KEY" > ~/.ssh/ec2_key
+          chmod 600 ~/.ssh/ec2_key
+          printf '%s\n' "$EC2_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Deploy
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+          INPUT_DEPLOY_BACKEND: ${{ github.event.inputs.deploy_backend || 'true' }}
+          INPUT_DEPLOY_FRONTEND: ${{ github.event.inputs.deploy_frontend || 'false' }}
+          INPUT_RUN_TESTS: ${{ github.event.inputs.run_tests || 'false' }}
+        run: |
+          set -euo pipefail
+
+          REMOTE_ARGS=""
+          if [[ "$INPUT_DEPLOY_BACKEND" == "true" ]]; then
+            REMOTE_ARGS="$REMOTE_ARGS --backend"
+          fi
+          if [[ "$INPUT_DEPLOY_FRONTEND" == "true" ]]; then
+            REMOTE_ARGS="$REMOTE_ARGS --frontend"
+          fi
+          if [[ "$INPUT_RUN_TESTS" == "true" ]]; then
+            REMOTE_ARGS="$REMOTE_ARGS --run-tests"
+          fi
+
+          if [[ -z "${REMOTE_ARGS// }" ]]; then
+            echo "No deploy target selected. Exiting."
+            exit 1
+          fi
+
+          scp -i ~/.ssh/ec2_key -o IdentitiesOnly=yes ./scripts/ec2-deploy.sh \
+            "${EC2_USER}@${EC2_HOST}:/tmp/ec2-deploy.sh"
+
+          ssh -i ~/.ssh/ec2_key -o IdentitiesOnly=yes "${EC2_USER}@${EC2_HOST}" \
+            "set -euo pipefail; chmod +x /tmp/ec2-deploy.sh; /tmp/ec2-deploy.sh ${REMOTE_ARGS}"
