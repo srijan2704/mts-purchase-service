@@ -76,6 +76,10 @@ Backend note:
   - `http://127.0.0.1:8080/actuator/health`
 - Fallback health check (if actuator is restricted):
   - `http://127.0.0.1:8080/swagger-ui/index.html`
+- Health check waits for startup (default ~180 seconds):
+  - `BACKEND_HEALTH_INITIAL_DELAY_SECONDS` (default `60`)
+  - `BACKEND_HEALTH_MAX_RETRIES` (default `18`)
+  - `BACKEND_HEALTH_RETRY_DELAY_SECONDS` (default `10`)
 - To customize paths or service names on EC2, set environment variables before running `scripts/ec2-deploy.sh`.
 
 ## 6. Troubleshooting

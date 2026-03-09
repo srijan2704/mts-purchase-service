@@ -107,7 +107,7 @@ jobs:
                TMP_SYNC_DIR=\$(mktemp -d); \
                mkdir -p /opt/mts-purchase-service; \
                tar -xzf /tmp/mts-purchase-service-src.tgz -C \"\$TMP_SYNC_DIR\"; \
-               rsync -a --delete --exclude '.env' --exclude 'logs/' \"\$TMP_SYNC_DIR/\" /opt/mts-purchase-service/; \
+               rsync -a --delete --exclude '.git/' --exclude '.env' --exclude 'logs/' \"\$TMP_SYNC_DIR/\" /opt/mts-purchase-service/; \
                rm -rf \"\$TMP_SYNC_DIR\"; \
              fi; \
              chmod +x /tmp/ec2-deploy.sh; \
