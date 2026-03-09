@@ -269,6 +269,7 @@
         <li><code>DB_PASSWORD</code></li>
         <li><code>AUTH_REG_OTP_FROM_EMAIL</code> and <code>AUTH_REG_OTP_OWNER_EMAIL</code></li>
         <li><code>AUTH_TRANSPORT_REQUIRE_HTTPS=true</code> for UAT/PROD</li>
+        <li><code>AUTH_RATE_LIMIT_MAX_REQUESTS=5</code> and <code>AUTH_RATE_LIMIT_WINDOW_SECONDS=30</code></li>
         <li><code>APP_CORS_ALLOWED_ORIGINS</code> with trusted HTTPS UI origins only</li>
       </ul>
 
@@ -294,6 +295,7 @@
         <li>Frontend blocks insecure auth and authenticated API calls when page/API transport is not HTTPS.</li>
         <li>Frontend API base override attack surface reduced by disabling URL/localStorage API base overrides.</li>
         <li>CORS moved to allowlist model via <code>app.cors.allowed-origins</code> (wildcard origins removed).</li>
+        <li>Auth rate limiting enabled per client IP: login and OTP flows are limited to 5 requests per 30 seconds.</li>
         <li>Passwords are stored as BCrypt hashes; session tokens and OTPs are stored as hashes.</li>
         <li>OTP registration flow has TTL and max-attempt limits; owner email is externalized to environment config.</li>
       </ul>
@@ -320,7 +322,6 @@
       <h2>10. Known Gaps / Next Recommended Enhancements</h2>
       <ol>
         <li>Replace temporary self-signed cert with CA-signed trusted cert (Let’s Encrypt/ACM/other).</li>
-        <li>Add login and OTP rate limiting (Nginx and/or backend) to reduce brute-force risk.</li>
         <li>Protect or disable Swagger/OpenAPI endpoints in production environments.</li>
         <li>Add security response headers at nginx layer (HSTS, CSP, X-Content-Type-Options, Referrer-Policy).</li>
         <li>If dashboard remains in a separate repository/folder, maintain a dedicated UI release document and versioning.</li>

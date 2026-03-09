@@ -155,6 +155,9 @@ MAIL_PASSWORD=YOUR_GMAIL_APP_PASSWORD
 AUTH_REG_OTP_FROM_EMAIL=bgp.maatarastore@gmail.com
 AUTH_REG_OTP_OWNER_EMAIL=bgp.maatarastore@gmail.com
 AUTH_TRANSPORT_REQUIRE_HTTPS=true
+AUTH_RATE_LIMIT_ENABLED=true
+AUTH_RATE_LIMIT_MAX_REQUESTS=5
+AUTH_RATE_LIMIT_WINDOW_SECONDS=30
 APP_CORS_ALLOWED_ORIGINS=https://<EC2_PUBLIC_IP>,https://<YOUR_DOMAIN>
 ```
 
@@ -420,6 +423,7 @@ cd /opt/mts-finance-dashboard && git pull origin main && sudo rsync -av --delete
 - Use `/etc/mts-purchase-service.env` with restricted permissions.
 - Rotate DB and SMTP credentials if exposed.
 - Keep `AUTH_TRANSPORT_REQUIRE_HTTPS=true` in UAT/PROD.
+- Keep `AUTH_RATE_LIMIT_MAX_REQUESTS=5` and `AUTH_RATE_LIMIT_WINDOW_SECONDS=30` for login/OTP throttling.
 - Replace self-signed cert with CA-signed cert for end users as soon as possible.
 
 Set secure file permissions:
