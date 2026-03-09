@@ -35,7 +35,6 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/sellers")
-@CrossOrigin(origins = "*") // Allow JS frontend on any local port (e.g. 3000, 5500)
 @Tag(name = "Sellers", description = "Manage seller master records.")
 public class SellerController {
     

@@ -39,15 +39,29 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     @Override
     @Transactional(readOnly = true)
     public List<ProductVariantDTO> getVariantsByProduct(Long productId, boolean includeInactive) {
-        // Guard: product must exist before returning child records.
-        if (!productRepository.existsById(productId)) {
-            throw new ResourceNotFoundException("Product", productId);
-        }
-
         List<ProductVariant> variants = includeInactive
                 ? productVariantRepository.findByProductProductIdOrderByVariantLabelAsc(productId)
                 : productVariantRepository.findByProductProductIdAndIsActiveOrderByVariantLabelAsc(productId, 1);
 
+        // Preserve not-found behavior without paying existence check cost for normal non-empty results.
+        if (variants.isEmpty() && !productRepository.existsById(productId)) {
+            throw new ResourceNotFoundException("Product", productId);
+        }
+
+        return variants.stream().map(this::mapToDTO).collect(Collectors.toList());
+    }
+
+    /**
+     * Returns variants for multiple products in one query to avoid N+1 round-trips.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<ProductVariantDTO> getVariantsByProductIds(List<Long> productIds, boolean includeInactive) {
+        if (productIds == null || productIds.isEmpty()) {
+            return List.of();
+        }
+
+        List<ProductVariant> variants = productVariantRepository.findByProductIdsWithRefs(productIds, includeInactive);
         return variants.stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 

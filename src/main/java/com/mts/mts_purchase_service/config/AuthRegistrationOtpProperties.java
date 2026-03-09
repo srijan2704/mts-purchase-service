@@ -15,6 +15,7 @@ public class AuthRegistrationOtpProperties {
     private int maxAttempts = 5;
     private boolean devLogEnabled = false;
     private String fromEmail;
+    private String ownerEmail;
 
     /** Returns true when OTP registration flow is enabled. */
     public boolean isEnabled() {
@@ -64,5 +65,15 @@ public class AuthRegistrationOtpProperties {
     /** Assigns sender email configured for OTP notifications. */
     public void setFromEmail(String fromEmail) {
         this.fromEmail = fromEmail;
+    }
+
+    /** Returns owner email configured for OTP verification approval. */
+    public String getOwnerEmail() {
+        return ownerEmail;
+    }
+
+    /** Assigns owner email configured for OTP verification approval. */
+    public void setOwnerEmail(String ownerEmail) {
+        this.ownerEmail = ownerEmail;
     }
 }

@@ -1,7 +1,7 @@
 # MTS Purchase Service + MTS Finance Dashboard
 ## AWS EC2 Runbook (Post Git Pull)
 
-Last updated: 2026-03-03
+Last updated: 2026-03-09
 
 This runbook contains commands to:
 - update backend and frontend after `git pull`
@@ -154,6 +154,8 @@ MAIL_USERNAME=bgp.maatarastore@gmail.com
 MAIL_PASSWORD=YOUR_GMAIL_APP_PASSWORD
 AUTH_REG_OTP_FROM_EMAIL=bgp.maatarastore@gmail.com
 AUTH_REG_OTP_OWNER_EMAIL=bgp.maatarastore@gmail.com
+AUTH_TRANSPORT_REQUIRE_HTTPS=true
+APP_CORS_ALLOWED_ORIGINS=https://<EC2_PUBLIC_IP>,https://<YOUR_DOMAIN>
 ```
 
 Apply env changes:
@@ -217,8 +219,8 @@ sudo systemctl status mts-purchase-service
 Local app checks on EC2:
 
 ```bash
+curl -I http://127.0.0.1:8080/actuator/health
 curl -I http://127.0.0.1:8080/swagger-ui/index.html
-curl -I http://127.0.0.1:8080/v3/api-docs
 ```
 
 Check listening port:
@@ -227,16 +229,23 @@ Check listening port:
 sudo ss -ltnp | grep 8080
 ```
 
-Expected external swagger URL (if 8080 exposed):
+Expected external HTTPS dashboard URL (via nginx):
 
 ```text
-http://<EC2_PUBLIC_IP>:8080/swagger-ui/index.html
+https://<EC2_PUBLIC_IP>/
 ```
 
 If behind nginx reverse proxy:
 
 ```text
-http://<EC2_PUBLIC_IP>/swagger-ui/index.html
+https://<EC2_PUBLIC_IP>/api/actuator/health
+```
+
+For self-signed cert checks from CLI, add `-k`:
+
+```bash
+curl -k -I https://<EC2_PUBLIC_IP>/
+curl -k -I https://<EC2_PUBLIC_IP>/api/actuator/health
 ```
 
 ---
@@ -251,7 +260,115 @@ Inbound rules:
 
 ---
 
-## 10. Common Failures and Fix
+## 10. Self-Signed HTTPS Setup (Temporary)
+
+This setup removes plain HTTP login on public internet and works with current auth transport enforcement.
+
+### 10.1 Generate certificate and key
+
+```bash
+sudo dnf install -y openssl
+sudo mkdir -p /etc/nginx/ssl
+PUBLIC_IP="<EC2_PUBLIC_IP>"
+
+sudo tee /etc/nginx/ssl/openssl-san.cnf > /dev/null <<EOF
+[req]
+default_bits = 2048
+prompt = no
+default_md = sha256
+x509_extensions = v3_req
+distinguished_name = dn
+
+[dn]
+C = IN
+ST = NA
+L = NA
+O = MTS
+OU = Finance
+CN = ${PUBLIC_IP}
+
+[v3_req]
+subjectAltName = @alt_names
+keyUsage = critical, digitalSignature, keyEncipherment
+extendedKeyUsage = serverAuth
+
+[alt_names]
+IP.1 = ${PUBLIC_IP}
+EOF
+
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+  -keyout /etc/nginx/ssl/mts-selfsigned.key \
+  -out /etc/nginx/ssl/mts-selfsigned.crt \
+  -config /etc/nginx/ssl/openssl-san.cnf
+
+sudo chmod 600 /etc/nginx/ssl/mts-selfsigned.key
+sudo chmod 644 /etc/nginx/ssl/mts-selfsigned.crt
+```
+
+### 10.2 Update nginx config (`/etc/nginx/conf.d/mts-finance-dashboard.conf`)
+
+```nginx
+server {
+    listen 80;
+    server_name _;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name _;
+
+    ssl_certificate     /etc/nginx/ssl/mts-selfsigned.crt;
+    ssl_certificate_key /etc/nginx/ssl/mts-selfsigned.key;
+    ssl_protocols TLSv1.2 TLSv1.3;
+
+    root /var/www/mts-finance-dashboard;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    location /api/ {
+        proxy_pass http://127.0.0.1:8080/api/;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+### 10.3 Validate and reload nginx
+
+```bash
+sudo nginx -t
+sudo systemctl restart nginx
+sudo systemctl status nginx
+```
+
+### 10.4 Verify HTTPS routing and auth transport
+
+```bash
+curl -I http://<EC2_PUBLIC_IP>/
+curl -k -I https://<EC2_PUBLIC_IP>/
+curl -k -I https://<EC2_PUBLIC_IP>/api/actuator/health
+```
+
+Expected:
+- HTTP 80 redirects to HTTPS.
+- HTTPS endpoint returns 200/30x.
+- Browser warning appears until cert is trusted locally (expected for self-signed).
+
+### 10.5 Renewal / Rotation
+
+Regenerate cert before expiry and restart nginx.
+
+```bash
+sudo openssl x509 -in /etc/nginx/ssl/mts-selfsigned.crt -noout -enddate
+```
+
+## 11. Common Failures and Fix
 
 ### ORA-12506 / ACL filtering
 Cause: EC2 outbound IP not in Oracle Autonomous DB allowlist.
@@ -285,7 +402,7 @@ sudo journalctl -u mts-purchase-service --since "15 min ago" --no-pager
 
 ---
 
-## 11. Quick Recovery Commands (Copy/Paste)
+## 12. Quick Recovery Commands (Copy/Paste)
 
 ```bash
 cd /opt/mts-purchase-service && git pull origin main && ./mvnw clean package -DskipTests && cp "$(ls target/*.jar | grep -v 'original-' | head -n1)" /opt/mts-purchase-service/app.jar && sudo systemctl restart mts-purchase-service && sudo systemctl status mts-purchase-service
@@ -297,11 +414,13 @@ cd /opt/mts-finance-dashboard && git pull origin main && sudo rsync -av --delete
 
 ---
 
-## 12. Security Notes
+## 13. Security Notes
 
 - Do not keep secrets in repo `.env` files.
 - Use `/etc/mts-purchase-service.env` with restricted permissions.
 - Rotate DB and SMTP credentials if exposed.
+- Keep `AUTH_TRANSPORT_REQUIRE_HTTPS=true` in UAT/PROD.
+- Replace self-signed cert with CA-signed cert for end users as soon as possible.
 
 Set secure file permissions:
 
@@ -309,4 +428,3 @@ Set secure file permissions:
 sudo chown root:root /etc/mts-purchase-service.env
 sudo chmod 600 /etc/mts-purchase-service.env
 ```
-

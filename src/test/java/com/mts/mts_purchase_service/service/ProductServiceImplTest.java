@@ -21,7 +21,10 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -128,5 +131,56 @@ class ProductServiceImplTest {
         productService.softDeleteProduct(10L);
 
         verify(productRepository).save(argThat(product -> !product.isActive()));
+    }
+
+    @Test
+    void getProducts_withIncludeVariantsTrue_shouldUseBulkVariantFetch() {
+        ProductType type = new ProductType(3L, "Edible Oils", "desc");
+
+        Product p1 = new Product();
+        p1.setProductId(10L);
+        p1.setProductName("Mangal Sunflower Oil");
+        p1.setType(type);
+        p1.setActive(true);
+
+        Product p2 = new Product();
+        p2.setProductId(11L);
+        p2.setProductName("Mangal Mustard Oil");
+        p2.setType(type);
+        p2.setActive(true);
+
+        ProductVariantDTO v1 = new ProductVariantDTO(101L, 10L, 1L, "Litre",
+                "1L x 16 Box", new BigDecimal("1.000"), 16, null, true);
+        ProductVariantDTO v2 = new ProductVariantDTO(102L, 11L, 1L, "Litre",
+                "5L x 4 Box", new BigDecimal("5.000"), 4, null, true);
+
+        when(productRepository.search(null, null, false)).thenReturn(List.of(p1, p2));
+        when(productVariantService.getVariantsByProductIds(anyList(), eq(false))).thenReturn(List.of(v1, v2));
+
+        List<ProductDTO> response = productService.getProducts(null, null, false, true);
+
+        assertEquals(2, response.size());
+        assertEquals(1, response.get(0).getVariants().size());
+        assertEquals(1, response.get(1).getVariants().size());
+        verify(productVariantService).getVariantsByProductIds(argThat(ids -> ids.size() == 2 && ids.containsAll(List.of(10L, 11L))), eq(false));
+        verify(productVariantService, never()).getVariantsByProduct(any(Long.class), eq(false));
+    }
+
+    @Test
+    void getProducts_withIncludeVariantsFalse_shouldNotFetchVariants() {
+        ProductType type = new ProductType(3L, "Edible Oils", "desc");
+        Product p1 = new Product();
+        p1.setProductId(10L);
+        p1.setProductName("Mangal Sunflower Oil");
+        p1.setType(type);
+        p1.setActive(true);
+
+        when(productRepository.search(null, null, false)).thenReturn(List.of(p1));
+
+        List<ProductDTO> response = productService.getProducts(null, null, false, false);
+
+        assertEquals(1, response.size());
+        assertEquals(0, response.get(0).getVariants().size());
+        verify(productVariantService, never()).getVariantsByProductIds(anyList(), eq(false));
     }
 }

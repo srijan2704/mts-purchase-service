@@ -12,6 +12,9 @@ public interface ProductVariantService {
     /** Returns variants for a product. */
     List<ProductVariantDTO> getVariantsByProduct(Long productId, boolean includeInactive);
 
+    /** Returns variants for multiple products in one call. */
+    List<ProductVariantDTO> getVariantsByProductIds(List<Long> productIds, boolean includeInactive);
+
     /** Returns one variant by id. */
     ProductVariantDTO getVariantById(Long variantId);
 

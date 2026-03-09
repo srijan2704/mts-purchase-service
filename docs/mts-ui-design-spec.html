@@ -116,7 +116,7 @@
   <main class="wrap">
     <section class="card">
       <h1>MTS Finance Dashboard - Current State Design & Technical Specification</h1>
-      <p class="muted">Version 2.0 | Date: 2026-02-24 | Audience: Business Owner, UI Engineers, Backend Engineers, AI Coding Agents</p>
+      <p class="muted">Version 2.1 | Date: 2026-03-09 | Audience: Business Owner, UI Engineers, Backend Engineers, AI Coding Agents</p>
       <div>
         <span class="pill ok">Status: Active implementation</span>
         <span class="pill">UI Stack: HTML/CSS/Vanilla JavaScript</span>
@@ -267,6 +267,9 @@
         <li><code>DB_URL</code></li>
         <li><code>DB_USERNAME</code></li>
         <li><code>DB_PASSWORD</code></li>
+        <li><code>AUTH_REG_OTP_FROM_EMAIL</code> and <code>AUTH_REG_OTP_OWNER_EMAIL</code></li>
+        <li><code>AUTH_TRANSPORT_REQUIRE_HTTPS=true</code> for UAT/PROD</li>
+        <li><code>APP_CORS_ALLOWED_ORIGINS</code> with trusted HTTPS UI origins only</li>
       </ul>
 
       <h3>7.2 VS Code Local Run</h3>
@@ -284,7 +287,28 @@
     </section>
 
     <section class="card">
-      <h2>8. Observability and Error Handling</h2>
+      <h2>8. Security Features and Required Controls</h2>
+      <h3>8.1 Implemented Security Controls</h3>
+      <ul>
+        <li>Auth endpoints enforce HTTPS transport in UAT/PROD using proxy-aware checks (<code>X-Forwarded-Proto</code>).</li>
+        <li>Frontend blocks insecure auth and authenticated API calls when page/API transport is not HTTPS.</li>
+        <li>Frontend API base override attack surface reduced by disabling URL/localStorage API base overrides.</li>
+        <li>CORS moved to allowlist model via <code>app.cors.allowed-origins</code> (wildcard origins removed).</li>
+        <li>Passwords are stored as BCrypt hashes; session tokens and OTPs are stored as hashes.</li>
+        <li>OTP registration flow has TTL and max-attempt limits; owner email is externalized to environment config.</li>
+      </ul>
+
+      <h3>8.2 Required Deployment Settings (for current architecture)</h3>
+      <ul>
+        <li>Nginx must terminate TLS on port <code>443</code> and redirect port <code>80</code> traffic to HTTPS.</li>
+        <li>Nginx must send <code>Host</code>, <code>X-Forwarded-For</code>, and <code>X-Forwarded-Proto</code> headers to backend.</li>
+        <li>Backend runtime env must set <code>AUTH_TRANSPORT_REQUIRE_HTTPS=true</code> and correct <code>APP_CORS_ALLOWED_ORIGINS</code>.</li>
+        <li>Self-signed certificates are acceptable only as temporary measure; browsers will show trust warning until CA-signed cert is used.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>9. Observability and Error Handling</h2>
       <ul>
         <li>Global exception handling returns consistent API error envelopes.</li>
         <li>Request logging filter logs entry and exit for all <code>/api/**</code> endpoints at INFO level.</li>
@@ -293,17 +317,18 @@
     </section>
 
     <section class="card">
-      <h2>9. Known Gaps / Next Recommended Enhancements</h2>
+      <h2>10. Known Gaps / Next Recommended Enhancements</h2>
       <ol>
-        <li>Restrict CORS for production to known UI origins.</li>
-        <li>Reduce debug-level Hibernate logging in production profile.</li>
-        <li>Add explicit API health endpoint check in deployment pipeline.</li>
+        <li>Replace temporary self-signed cert with CA-signed trusted cert (Let’s Encrypt/ACM/other).</li>
+        <li>Add login and OTP rate limiting (Nginx and/or backend) to reduce brute-force risk.</li>
+        <li>Protect or disable Swagger/OpenAPI endpoints in production environments.</li>
+        <li>Add security response headers at nginx layer (HSTS, CSP, X-Content-Type-Options, Referrer-Policy).</li>
         <li>If dashboard remains in a separate repository/folder, maintain a dedicated UI release document and versioning.</li>
       </ol>
     </section>
 
     <section class="card">
-      <h2>10. Implementation Reference Structure</h2>
+      <h2>11. Implementation Reference Structure</h2>
       <pre><code>backend/
   src/main/java/com/mts/mts_purchase_service/
     controller/

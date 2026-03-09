@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.util.regex.Pattern;
 
 /**
  * Auth service implementation using DB-backed token sessions.
@@ -41,7 +42,7 @@ public class AuthServiceImpl implements AuthService {
     private static final int SESSION_TTL_MINUTES = 15;
     private static final int OTP_LENGTH = 6;
     private static final SecureRandom OTP_RANDOM = new SecureRandom();
-    private static final String ADMIN_REGISTRATION_EMAIL = "bgp.maatarastore@gmail.com";
+    private static final Pattern SIMPLE_EMAIL_PATTERN = Pattern.compile("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$");
 
     private final AppUserRepository appUserRepository;
     private final UserSessionRepository userSessionRepository;
@@ -106,7 +107,7 @@ public class AuthServiceImpl implements AuthService {
         otpRequest.setUsername(normalizedUsername);
         otpRequest.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         otpRequest.setOtpHash(TokenUtils.sha256Hex(rawOtp));
-        otpRequest.setOwnerEmail(ADMIN_REGISTRATION_EMAIL);
+        otpRequest.setOwnerEmail(otpProperties.getOwnerEmail().trim());
         otpRequest.setExpiresAt(expiry);
         otpRequest.setAttemptsLeft(otpProperties.getMaxAttempts());
         otpRequest.setVerified(false);
@@ -282,6 +283,10 @@ public class AuthServiceImpl implements AuthService {
         }
         if (otpProperties.getMaxAttempts() <= 0 || otpProperties.getMaxAttempts() > 10) {
             throw new IllegalStateException("OTP max attempts must be between 1 and 10");
+        }
+        String ownerEmail = otpProperties.getOwnerEmail();
+        if (ownerEmail == null || ownerEmail.isBlank() || !SIMPLE_EMAIL_PATTERN.matcher(ownerEmail.trim()).matches()) {
+            throw new IllegalStateException("auth.registration.otp.owner-email must be a valid email address");
         }
     }
 

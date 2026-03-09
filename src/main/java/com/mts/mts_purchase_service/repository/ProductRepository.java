@@ -19,8 +19,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
      */
     @Query("""
            SELECT p FROM Product p
+           JOIN FETCH p.type t
            WHERE (:includeInactive = true OR p.isActive = 1)
-             AND (:typeId IS NULL OR p.type.typeId = :typeId)
+             AND (:typeId IS NULL OR t.typeId = :typeId)
              AND (:search IS NULL OR LOWER(p.productName) LIKE LOWER(CONCAT('%', :search, '%')))
            ORDER BY p.productName ASC
            """)

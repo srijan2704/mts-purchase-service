@@ -13,31 +13,38 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * Auth controller for credential setup, registration OTP flow, login, and session lifecycle.
  */
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "*")
 @Tag(name = "Auth", description = "Credential setup, registration OTP, login, logout, and session inspection APIs.")
 public class AuthController {
 
     private static final String BEARER_PREFIX = "Bearer ";
 
     private final AuthService authService;
+    private final boolean requireHttpsTransport;
 
-    public AuthController(AuthService authService) {
+    public AuthController(
+            AuthService authService,
+            @Value("${auth.transport.require-https:false}") boolean requireHttpsTransport
+    ) {
         this.authService = authService;
+        this.requireHttpsTransport = requireHttpsTransport;
     }
 
     /**
@@ -63,7 +70,11 @@ public class AuthController {
                     )
             )
     )
-    public ResponseEntity<ApiResponseDTO<Void>> setup(@Valid @RequestBody AuthSetupRequestDTO request) {
+    public ResponseEntity<ApiResponseDTO<Void>> setup(
+            @Valid @RequestBody AuthSetupRequestDTO request,
+            HttpServletRequest httpRequest
+    ) {
+        validateHttpsTransport(httpRequest);
         authService.setupInitialCredential(request);
         return ResponseEntity.ok(ApiResponseDTO.success("Credential setup completed successfully", null));
     }
@@ -92,8 +103,10 @@ public class AuthController {
             )
     )
     public ResponseEntity<ApiResponseDTO<AuthRegisterOtpResponseDTO>> requestRegistrationOtp(
-            @Valid @RequestBody AuthRegisterRequestDTO request
+            @Valid @RequestBody AuthRegisterRequestDTO request,
+            HttpServletRequest httpRequest
     ) {
+        validateHttpsTransport(httpRequest);
         AuthRegisterOtpResponseDTO response = authService.requestRegistrationOtp(request);
         return ResponseEntity.ok(ApiResponseDTO.success("OTP sent to admin email", response));
     }
@@ -122,8 +135,10 @@ public class AuthController {
             )
     )
     public ResponseEntity<ApiResponseDTO<Void>> verifyRegistrationOtp(
-            @Valid @RequestBody AuthRegisterOtpVerifyRequestDTO request
+            @Valid @RequestBody AuthRegisterOtpVerifyRequestDTO request,
+            HttpServletRequest httpRequest
     ) {
+        validateHttpsTransport(httpRequest);
         authService.verifyRegistrationOtp(request);
         return ResponseEntity.ok(ApiResponseDTO.success("User registration completed successfully", null));
     }
@@ -151,7 +166,11 @@ public class AuthController {
                     )
             )
     )
-    public ResponseEntity<ApiResponseDTO<AuthSessionResponseDTO>> login(@Valid @RequestBody AuthLoginRequestDTO request) {
+    public ResponseEntity<ApiResponseDTO<AuthSessionResponseDTO>> login(
+            @Valid @RequestBody AuthLoginRequestDTO request,
+            HttpServletRequest httpRequest
+    ) {
+        validateHttpsTransport(httpRequest);
         AuthSessionResponseDTO session = authService.login(request);
         return ResponseEntity.ok(ApiResponseDTO.success("Login successful", session));
     }
@@ -161,7 +180,11 @@ public class AuthController {
      */
     @PostMapping("/logout")
     @Operation(summary = "Logout", description = "Revokes the current bearer token session.")
-    public ResponseEntity<ApiResponseDTO<Void>> logout(@RequestHeader("Authorization") String authorizationHeader) {
+    public ResponseEntity<ApiResponseDTO<Void>> logout(
+            @RequestHeader("Authorization") String authorizationHeader,
+            HttpServletRequest httpRequest
+    ) {
+        validateHttpsTransport(httpRequest);
         authService.logout(extractBearerToken(authorizationHeader));
         return ResponseEntity.ok(ApiResponseDTO.success("Logout successful", null));
     }
@@ -171,7 +194,11 @@ public class AuthController {
      */
     @GetMapping("/me")
     @Operation(summary = "Current session", description = "Returns current logged-in user and session expiry.")
-    public ResponseEntity<ApiResponseDTO<AuthSessionInfoDTO>> me(@RequestHeader("Authorization") String authorizationHeader) {
+    public ResponseEntity<ApiResponseDTO<AuthSessionInfoDTO>> me(
+            @RequestHeader("Authorization") String authorizationHeader,
+            HttpServletRequest httpRequest
+    ) {
+        validateHttpsTransport(httpRequest);
         AuthSessionInfoDTO info = authService.validateAndRefresh(extractBearerToken(authorizationHeader));
         return ResponseEntity.ok(ApiResponseDTO.success("Session is valid", info));
     }
@@ -188,5 +215,28 @@ public class AuthController {
             throw new com.mts.mts_purchase_service.exception.UnauthorizedException("Missing bearer token");
         }
         return token;
+    }
+
+    /**
+     * Enforces TLS for auth endpoints in secured environments.
+     */
+    private void validateHttpsTransport(HttpServletRequest request) {
+        if (!requireHttpsTransport) {
+            return;
+        }
+
+        String forwardedProto = request.getHeader("X-Forwarded-Proto");
+        boolean secure = request.isSecure();
+        if (forwardedProto != null && !forwardedProto.isBlank()) {
+            String proto = forwardedProto.split(",")[0].trim();
+            secure = "https".equalsIgnoreCase(proto);
+        }
+
+        if (!secure) {
+            throw new ResponseStatusException(
+                    HttpStatus.UPGRADE_REQUIRED,
+                    "HTTPS is required for authentication endpoints"
+            );
+        }
     }
 }

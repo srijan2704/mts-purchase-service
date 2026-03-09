@@ -40,7 +40,7 @@ class AuthControllerTest {
 
     @BeforeEach
     void setUp() {
-        AuthController controller = new AuthController(authService);
+        AuthController controller = new AuthController(authService, false);
         mockMvc = MockMvcBuilders.standaloneSetup(controller)
                 .setControllerAdvice(new MtsGlobalExceptionHandler())
                 .build();

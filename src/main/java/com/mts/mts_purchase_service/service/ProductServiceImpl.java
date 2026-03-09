@@ -8,11 +8,15 @@ import com.mts.mts_purchase_service.models.ProductDTO;
 import com.mts.mts_purchase_service.models.ProductVariantDTO;
 import com.mts.mts_purchase_service.repository.ProductRepository;
 import com.mts.mts_purchase_service.repository.ProductTypeRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -20,6 +24,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class ProductServiceImpl implements ProductService {
+
+    private static final Logger log = LoggerFactory.getLogger(ProductServiceImpl.class);
 
     private final ProductRepository productRepository;
     private final ProductTypeRepository productTypeRepository;
@@ -41,12 +47,43 @@ public class ProductServiceImpl implements ProductService {
     public List<ProductDTO> getProducts(Long typeId, String search, boolean includeInactive, boolean includeVariants) {
         String normalizedSearch = (search == null || search.isBlank()) ? null : search.trim();
 
-        return productRepository.search(typeId, normalizedSearch, includeInactive).stream()
+        long productsQueryStartNanos = System.nanoTime();
+        List<Product> products = productRepository.search(typeId, normalizedSearch, includeInactive);
+        long productsQueryMs = (System.nanoTime() - productsQueryStartNanos) / 1_000_000;
+
+        Map<Long, List<ProductVariantDTO>> variantsByProductMutable = Collections.emptyMap();
+        long variantsQueryMs = 0L;
+        if (includeVariants && !products.isEmpty()) {
+            List<Long> productIds = products.stream().map(Product::getProductId).collect(Collectors.toList());
+
+            long variantsQueryStartNanos = System.nanoTime();
+            variantsByProductMutable = productVariantService.getVariantsByProductIds(productIds, false).stream()
+                    .collect(Collectors.groupingBy(ProductVariantDTO::getProductId));
+            variantsQueryMs = (System.nanoTime() - variantsQueryStartNanos) / 1_000_000;
+        }
+        final Map<Long, List<ProductVariantDTO>> variantsByProduct = variantsByProductMutable;
+
+        if (includeVariants) {
+            int variantCount = variantsByProduct.values().stream().mapToInt(List::size).sum();
+            log.info(
+                    "ORACLE_DB_TIME endpoint=/api/products includeVariants=true productsQueryMs={} variantsQueryMs={} totalDbMs={} productCount={} variantCount={} typeId={} search={} includeInactive={}",
+                    productsQueryMs,
+                    variantsQueryMs,
+                    productsQueryMs + variantsQueryMs,
+                    products.size(),
+                    variantCount,
+                    typeId,
+                    normalizedSearch,
+                    includeInactive
+            );
+        }
+
+        return products.stream()
                 .map(p -> mapToDTO(
                         p,
                         includeVariants
-                                ? productVariantService.getVariantsByProduct(p.getProductId(), false)
-                                : new ArrayList<>()
+                                ? variantsByProduct.getOrDefault(p.getProductId(), Collections.emptyList())
+                                : Collections.emptyList()
                 ))
                 .collect(Collectors.toList());
     }
