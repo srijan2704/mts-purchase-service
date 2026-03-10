@@ -4,6 +4,7 @@
 .env
 .env.*
 !.env.example
+docs
 
 # OCI wallet and TLS secret material
 src/main/resources/Wallet_mtsdb/
