@@ -179,9 +179,6 @@ Workflow uses repository secrets:
 - `EC2_SSH_PRIVATE_KEY`
 - `EC2_KNOWN_HOSTS`
 
-Related ops docs:
-- `docs/github-actions-ec2-deploy.md`
-- `docs/ec2-runbook.md`
 
 ## 12. Security Guidelines
 

@@ -3,6 +3,7 @@ package com.mts.mts_purchase_service.controller;
 import com.mts.mts_purchase_service.exception.MtsGlobalExceptionHandler;
 import com.mts.mts_purchase_service.exception.ResourceNotFoundException;
 import com.mts.mts_purchase_service.models.ProductDTO;
+import com.mts.mts_purchase_service.models.ProductVariantDTO;
 import com.mts.mts_purchase_service.service.ProductService;
 import com.mts.mts_purchase_service.service.ProductVariantService;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,9 +15,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -88,5 +92,31 @@ class ProductControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.message").value("Validation failed"));
+    }
+
+    @Test
+    void getVariantsByProduct_shouldReturn200() throws Exception {
+        ProductVariantDTO variant = new ProductVariantDTO(
+                101L,
+                10L,
+                2L,
+                "Litre",
+                "1L x 12",
+                new BigDecimal("1.000"),
+                12,
+                "BAR-100",
+                true
+        );
+
+        when(productVariantService.getVariantsByProduct(10L, false)).thenReturn(List.of(variant));
+
+        mockMvc.perform(get("/api/products/10/variants"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data[0].variantId").value(101))
+                .andExpect(jsonPath("$.data[0].variantLabel").value("1L x 12"))
+                .andExpect(jsonPath("$.data[0].unitName").value("Litre"));
+
+        verify(productVariantService).getVariantsByProduct(10L, false);
     }
 }

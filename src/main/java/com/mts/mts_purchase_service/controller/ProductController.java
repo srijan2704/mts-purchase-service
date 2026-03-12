@@ -69,7 +69,7 @@ public class ProductController {
      * Returns variants of one product.
      */
     @GetMapping("/{id}/variants")
-    @Operation(summary = "List variants by product")
+    @Operation(summary = "List variants by product", description = "Used by maintenance UI to show product variants in popup.")
     public ResponseEntity<ApiResponseDTO<List<ProductVariantDTO>>> getVariantsByProduct(
             @PathVariable Long id,
             @RequestParam(defaultValue = "false") boolean includeInactive
